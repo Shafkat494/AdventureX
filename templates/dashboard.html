@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .dashboard-wrapper {
+        padding: 50px 0;
+        background-color: #f8f9fc;
+        min-height: 90vh;
+    }
+
+    .header-section {
+        margin-bottom: 50px;
+        text-align: center;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #edf2f7;
+    }
+
+    .welcome-title {
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+        font-size: 2.5rem;
+    }
+
+    .stats-text {
+        color: #718096;
+        font-size: 1.2rem;
+    }
+
+    .card-link {
+        text-decoration: none !important;
+        color: inherit;
+        display: block;
+        height: 100%;
+    }
+
+    .card-product {
+        border: none;
+        border-radius: 24px;
+        transition: 0.3s;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .card-link:hover .card-product {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .image-container {
+        height: 240px;
+        overflow: hidden;
+    }
+
+    .card-product img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .price-tag {
+        color: #6c5ce7;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .manage-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c5ce7;
+        background: #f3f0ff;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container">
+        
+        <!-- HEADER -->
+        <div class="header-section">
+            <h1 class="welcome-title">Welcome, {{ user.username }} 👋</h1>
+            <p class="stats-text">
+                {% if products %}
+                    You have <strong>{{ products|length }}</strong> products in your shop.
+                {% else %}
+                    Your shop is currently empty.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- 🛍️ PRODUCTS SECTION -->
+        <h3 class="mb-4">🛍️ Your Products</h3>
+
+        {% if products %}
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 mb-5">
+                <a href="/manage/{{ product.id }}" class="card-link">
+                    <div class="card card-product">
+                        <div class="image-container">
+                            <img src="/static/uploads/{{ product.image }}" alt="{{ product.title }}">
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="fw-bold">{{ product.title }}</h5>
+                            <p class="text-muted small">{{ product.description|truncate(60) }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="price-tag">₹{{ "{:,.2f}".format(product.price) }}</span>
+                                <span class="manage-label">Manage</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <div class="empty-box">
+                <h5>No products yet 😔</h5>
+                <a href="/upload" class="btn btn-primary mt-3">+ Add Product</a>
+            </div>
+        {% endif %}
+
+        <!-- 📦 STEP 5: ORDERS SECTION -->
+        <hr class="my-5">
+
+        <h3 class="mb-4">📦 Orders on Your Products</h3>
+
+        {% if orders %}
+            <div class="row">
+                {% for order in orders %}
+                <div class="col-md-6 mb-4">
+                    <div class="card p-3 shadow-sm border-0">
+                        <p><strong>Product ID:</strong> {{ order.product_id }}</p>
+                        <p><strong>Buyer ID:</strong> {{ order.user_id }}</p>
+                        <p><strong>Status:</strong> {{ order.status }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No orders yet 😔</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

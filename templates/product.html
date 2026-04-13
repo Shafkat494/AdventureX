@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row align-items-center">
+
+        <!-- IMAGE -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            <img src="/static/uploads/{{ product.image }}" class="w-100 rounded-4 shadow-sm">
+        </div>
+
+        <!-- DETAILS -->
+        <div class="col-md-6">
+
+            <h2 class="fw-bold mb-2">{{ product.title }}</h2>
+
+            <h3 class="fw-bold mb-3" style="color:#111;">
+                ₹{{ product.price }}
+            </h3>
+
+            <p class="text-muted mb-4" style="line-height:1.6;">
+                {{ product.description }}
+            </p>
+
+             <!-- ✅ Wishlist success message (PUT HERE) -->
+            {% if wish %}
+                <p class="small mb-2" style="color:#28a745; font-weight:500;">
+                    ✔ Added to wishlist
+                </p>
+            {% endif %}
+
+            <!-- ACTIONS -->
+            <div class="d-grid gap-2">
+
+                <!-- ❤️ LIKE -->
+                <form method="post" action="/like/{{ product.id }}">
+                    <button class="btn {{ 'btn-dark' if liked else 'btn-outline-dark' }} w-100">
+                        {{ '♥ Liked' if liked else '♡ Like' }}
+                    </button>
+                </form>
+
+                <!-- ⭐ WISHLIST -->
+                <form method="post" action="/wishlist/{{ product.id }}">
+                    <button class="btn w-100 {{ 'btn-dark' if in_wishlist else 'btn-outline-secondary' }}">
+                        {{ '★ Saved' if in_wishlist else '☆ Add to Wishlist' }}
+                    </button>
+                </form>
+
+                <!-- 🛒 CART (FINAL FIX) -->
+                {% if in_cart %}
+                    <button class="btn w-100" style="
+                        border:1.5px solid #111;
+                        background:#f8f9fa;
+                        font-weight:600;
+                    " disabled>
+                        ✔ Already in Cart
+                    </button>
+
+                    <a href="/cart" class="btn btn-dark w-100">
+                        View Cart
+                    </a>
+                {% else %}
+                    <form method="post" action="/cart/{{ product.id }}">
+                        <button class="btn btn-dark w-100">
+                            Add to Cart
+                        </button>
+                    </form>
+                {% endif %}
+
+                <!-- 💳 BUY -->
+                <button class="btn w-100" style="
+                    background:#111;
+                    color:white;
+                    font-weight:600;
+                ">
+                    Buy Now
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

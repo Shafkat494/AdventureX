@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #222;
+    }
+
+    .product-card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        transition: all 0.25s ease;
+        background: white;
+        cursor: pointer;
+        height: 100%;
+    }
+
+    .product-card:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+    }
+
+    .product-img {
+        height: 220px;
+        width: 100%;
+        object-fit: cover;
+        transition: 0.3s;
+    }
+
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        padding: 16px;
+    }
+
+    .product-title {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #111;
+    }
+
+    .product-desc {
+        font-size: 13px;
+        color: #777;
+        height: 38px;
+        overflow: hidden;
+        line-height: 1.4;
+    }
+
+    .product-price {
+        color: #667eea;
+        font-weight: 700;
+        font-size: 17px;
+        margin-top: 10px;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 60px 20px;
+        color: #777;
+    }
+
+    .empty-box h4 {
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .empty-box p {
+        font-size: 14px;
+    }
+</style>
+
+<h2 class="page-title">🎨 Student Marketplace</h2>
+
+<div class="row g-4">
+
+    {% if products %}
+        {% for product in products %}
+
+        <div class="col-md-4 col-lg-3 d-flex">
+
+            <a href="/product/{{ product.id }}" class="w-100" style="text-decoration: none; color: inherit;">
+
+                <div class="card product-card">
+
+                    <img src="/static/uploads/{{ product.image }}" class="product-img">
+
+                    <div class="card-body">
+                        <div class="product-title">
+                            {{ product.title }}
+                        </div>
+
+                        <div class="product-desc">
+                            {{ product.description }}
+                        </div>
+
+                        <div class="product-price">
+                            ₹{{ product.price }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-box">
+            <h4>No products yet 😔</h4>
+            <p>Be the first student to upload something amazing!</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
