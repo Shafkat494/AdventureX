@@ -1,14 +1,32 @@
-from fastapi import APIRouter, Request, Form, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import (
+    APIRouter,
+    Request,
+    Form,
+    Depends
+)
+
+from fastapi.responses import (
+    HTMLResponse,
+    RedirectResponse
+)
+
 from fastapi.templating import Jinja2Templates
 
 from sqlalchemy.orm import Session
 
 from database import get_db
+
 from models import User
 
-from utils.security import hash_password, verify_password
+from utils.security import (
+    hash_password,
+    verify_password
+)
 
+
+# =========================================================
+# ROUTER
+# =========================================================
 
 router = APIRouter()
 
@@ -26,6 +44,7 @@ def signup_page(request: Request):
         "signup.html",
         {
             "request": request,
+            "user": None,
             "error": None
         }
     )
@@ -46,13 +65,14 @@ def signup(
     db: Session = Depends(get_db)
 ):
 
-    # Password check
+    # Password match check
     if password != confirm_password:
 
         return templates.TemplateResponse(
             "signup.html",
             {
                 "request": request,
+                "user": None,
                 "error": "Passwords do not match"
             }
         )
@@ -68,6 +88,7 @@ def signup(
             "signup.html",
             {
                 "request": request,
+                "user": None,
                 "error": "Username already exists"
             }
         )
@@ -83,11 +104,12 @@ def signup(
             "signup.html",
             {
                 "request": request,
+                "user": None,
                 "error": "Email already exists"
             }
         )
 
-    # Create user
+    # Create new user
     new_user = User(
         username=username,
         email=email,
@@ -96,6 +118,7 @@ def signup(
     )
 
     db.add(new_user)
+
     db.commit()
 
     return RedirectResponse(
@@ -115,6 +138,7 @@ def login_page(request: Request):
         "login.html",
         {
             "request": request,
+            "user": None,
             "error": None
         }
     )
@@ -137,12 +161,16 @@ def login(
     ).first()
 
     # Invalid credentials
-    if not user or not verify_password(password, user.password):
+    if not user or not verify_password(
+        password,
+        user.password
+    ):
 
         return templates.TemplateResponse(
             "login.html",
             {
                 "request": request,
+                "user": None,
                 "error": "Invalid username or password"
             }
         )
@@ -158,7 +186,9 @@ def login(
         httponly=True,
         max_age=60 * 60 * 24,
         samesite="lax",
-        secure=False
+
+        # IMPORTANT FOR RENDER HTTPS
+        secure=True
     )
 
     return response
