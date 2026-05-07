@@ -1,160 +1,606 @@
 {% extends "base.html" %}
 
+{% block title %}
+Dashboard | AdventureX
+{% endblock %}
+
 {% block content %}
 
-<style>
-    .dashboard-wrapper {
-        padding: 50px 0;
-        background-color: #f8f9fc;
-        min-height: 90vh;
-    }
+<section class="max-w-7xl mx-auto px-6 py-16">
 
-    .header-section {
-        margin-bottom: 50px;
-        text-align: center;
-        padding-bottom: 30px;
-        border-bottom: 2px solid #edf2f7;
-    }
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
 
-    .welcome-title {
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 10px;
-        font-size: 2.5rem;
-    }
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
 
-    .stats-text {
-        color: #718096;
-        font-size: 1.2rem;
-    }
+        <div>
 
-    .card-link {
-        text-decoration: none !important;
-        color: inherit;
-        display: block;
-        height: 100%;
-    }
+            <h1 class="text-5xl font-bold text-gray-800">
 
-    .card-product {
-        border: none;
-        border-radius: 24px;
-        transition: 0.3s;
-        background: #fff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        overflow: hidden;
-    }
+                Dashboard
 
-    .card-link:hover .card-product {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
+            </h1>
 
-    .image-container {
-        height: 240px;
-        overflow: hidden;
-    }
+            <p class="text-gray-500 mt-3 text-lg">
 
-    .card-product img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+                Welcome back, {{ user.username }}
 
-    .card-body {
-        padding: 20px;
-    }
-
-    .price-tag {
-        color: #6c5ce7;
-        font-size: 1.3rem;
-        font-weight: 700;
-    }
-
-    .manage-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: #6c5ce7;
-        background: #f3f0ff;
-        padding: 5px 10px;
-        border-radius: 8px;
-    }
-
-    .empty-box {
-        text-align: center;
-        padding: 40px;
-        color: #777;
-    }
-</style>
-
-<div class="dashboard-wrapper">
-    <div class="container">
-        
-        <!-- HEADER -->
-        <div class="header-section">
-            <h1 class="welcome-title">Welcome, {{ user.username }} 👋</h1>
-            <p class="stats-text">
-                {% if products %}
-                    You have <strong>{{ products|length }}</strong> products in your shop.
-                {% else %}
-                    Your shop is currently empty.
-                {% endif %}
             </p>
+
         </div>
 
-        <!-- 🛍️ PRODUCTS SECTION -->
-        <h3 class="mb-4">🛍️ Your Products</h3>
+        {% if dashboard_type == "host" %}
 
-        {% if products %}
-        <div class="row">
-            {% for product in products %}
-            <div class="col-lg-4 col-md-6 mb-5">
-                <a href="/manage/{{ product.id }}" class="card-link">
-                    <div class="card card-product">
-                        <div class="image-container">
-                            <img src="/static/uploads/{{ product.image }}" alt="{{ product.title }}">
-                        </div>
-                        <div class="card-body text-center">
-                            <h5 class="fw-bold">{{ product.title }}</h5>
-                            <p class="text-muted small">{{ product.description|truncate(60) }}</p>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="price-tag">₹{{ "{:,.2f}".format(product.price) }}</span>
-                                <span class="manage-label">Manage</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-            <div class="empty-box">
-                <h5>No products yet 😔</h5>
-                <a href="/upload" class="btn btn-primary mt-3">+ Add Product</a>
-            </div>
-        {% endif %}
+        <a href="/create-destination"
+            class="mt-6 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition">
 
-        <!-- 📦 STEP 5: ORDERS SECTION -->
-        <hr class="my-5">
+            + Add Destination
 
-        <h3 class="mb-4">📦 Orders on Your Products</h3>
+        </a>
 
-        {% if orders %}
-            <div class="row">
-                {% for order in orders %}
-                <div class="col-md-6 mb-4">
-                    <div class="card p-3 shadow-sm border-0">
-                        <p><strong>Product ID:</strong> {{ order.product_id }}</p>
-                        <p><strong>Buyer ID:</strong> {{ order.user_id }}</p>
-                        <p><strong>Status:</strong> {{ order.status }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-muted">No orders yet 😔</p>
         {% endif %}
 
     </div>
-</div>
+
+
+    <!-- ================================================= -->
+    <!-- HOST DASHBOARD -->
+    <!-- ================================================= -->
+
+    {% if dashboard_type == "host" %}
+
+    <!-- ================================================= -->
+    <!-- STATS -->
+    <!-- ================================================= -->
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+
+        <!-- Total Destinations -->
+        <div class="bg-white rounded-3xl shadow-md p-8">
+
+            <div class="text-5xl mb-4">
+                🏔️
+            </div>
+
+            <p class="text-gray-500">
+                Total Destinations
+            </p>
+
+            <h2 class="text-4xl font-bold mt-3">
+
+                {{ total_destinations }}
+
+            </h2>
+
+        </div>
+
+        <!-- Total Bookings -->
+        <div class="bg-white rounded-3xl shadow-md p-8">
+
+            <div class="text-5xl mb-4">
+                📖
+            </div>
+
+            <p class="text-gray-500">
+                Total Bookings
+            </p>
+
+            <h2 class="text-4xl font-bold mt-3">
+
+                {{ total_bookings }}
+
+            </h2>
+
+        </div>
+
+        <!-- Revenue -->
+        <div class="bg-white rounded-3xl shadow-md p-8">
+
+            <div class="text-5xl mb-4">
+                💰
+            </div>
+
+            <p class="text-gray-500">
+                Total Revenue
+            </p>
+
+            <h2 class="text-4xl font-bold mt-3 text-blue-600">
+
+                ₹{{ total_revenue }}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- DESTINATIONS -->
+    <!-- ================================================= -->
+
+    <div class="mb-16">
+
+        <div class="flex justify-between items-center mb-8">
+
+            <h2 class="text-3xl font-bold">
+
+                Your Destinations
+
+            </h2>
+
+        </div>
+
+        {% if destinations %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {% for destination in destinations %}
+
+            <div class="bg-white rounded-3xl shadow-md overflow-hidden">
+
+                <!-- Image -->
+                <div class="h-56 overflow-hidden">
+
+                    <img src="/static/uploads/{{ destination.image }}"
+                        alt="{{ destination.name }}"
+                        class="w-full h-full object-cover">
+
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+
+                    <div class="flex justify-between items-center mb-4">
+
+                        <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm">
+
+                            {{ destination.category }}
+
+                        </span>
+
+                        <span class="text-gray-500 text-sm">
+
+                            {{ destination.location }}
+
+                        </span>
+
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-3">
+
+                        {{ destination.name }}
+
+                    </h3>
+
+                    <p class="text-gray-500 line-clamp-2">
+
+                        {{ destination.description[:100] }}...
+
+                    </p>
+
+                    <div class="flex justify-between items-center mt-6">
+
+                        <span class="text-2xl font-bold text-blue-600">
+
+                            ₹{{ destination.price }}
+
+                        </span>
+
+                        <a href="/destination/{{ destination.slug }}"
+                            class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-xl transition">
+
+                            View
+
+                        </a>
+
+                    </div>
+
+                    <!-- Delete Button -->
+                    <form action="/delete-destination/{{ destination.id }}"
+                        method="POST"
+                        class="mt-5">
+
+                        <button type="submit"
+                            class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl transition">
+
+                            Delete Destination
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="bg-white rounded-3xl shadow-md p-14 text-center">
+
+            <h3 class="text-3xl font-bold mb-4">
+
+                No Destinations Yet
+
+            </h3>
+
+            <p class="text-gray-500 mb-8">
+
+                Start creating adventure experiences.
+
+            </p>
+
+            <a href="/create-destination"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition">
+
+                Create Destination
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOOKINGS -->
+    <!-- ================================================= -->
+
+    <div>
+
+        <h2 class="text-3xl font-bold mb-8">
+
+            Recent Bookings
+
+        </h2>
+
+        {% if bookings %}
+
+        <div class="space-y-6">
+
+            {% for booking in bookings %}
+
+            <div class="bg-white rounded-3xl shadow-md p-8">
+
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                    <!-- Left -->
+                    <div>
+
+                        <h3 class="text-2xl font-bold">
+
+                            {{ booking.destination.name }}
+
+                        </h3>
+
+                        <p class="text-gray-500 mt-2">
+
+                            Guests: {{ booking.guests }}
+
+                        </p>
+
+                        <p class="text-gray-500">
+
+                            Travel Date:
+                            {{ booking.travel_date.strftime('%d %B %Y') }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+
+                        {% if booking.status == "pending" %}
+
+                        <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
+
+                            Pending
+
+                        </span>
+
+                        {% elif booking.status == "confirmed" %}
+
+                        <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full">
+
+                            Confirmed
+
+                        </span>
+
+                        {% elif booking.status == "cancelled" %}
+
+                        <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full">
+
+                            Cancelled
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- Price -->
+                    <div class="text-right">
+
+                        <p class="text-gray-500">
+                            Total
+                        </p>
+
+                        <h3 class="text-3xl font-bold text-blue-600">
+
+                            ₹{{ booking.total_price }}
+
+                        </h3>
+
+                    </div>
+
+                    <!-- Confirm Button -->
+                    {% if booking.status == "pending" %}
+
+                    <form action="/confirm-booking/{{ booking.id }}"
+                        method="POST">
+
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition">
+
+                            Confirm
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="bg-white rounded-3xl shadow-md p-14 text-center">
+
+            <h3 class="text-3xl font-bold mb-4">
+
+                No Bookings Yet
+
+            </h3>
+
+            <p class="text-gray-500">
+
+                Traveler bookings will appear here.
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- TRAVELER DASHBOARD -->
+    <!-- ================================================= -->
+
+    {% else %}
+
+    <!-- ================================================= -->
+    <!-- STATS -->
+    <!-- ================================================= -->
+
+    <div class="bg-white rounded-3xl shadow-md p-10 mb-14">
+
+        <div class="flex items-center gap-6">
+
+            <div class="text-6xl">
+                ✈️
+            </div>
+
+            <div>
+
+                <p class="text-gray-500 text-lg">
+
+                    Total Trips
+
+                </p>
+
+                <h2 class="text-5xl font-bold mt-2">
+
+                    {{ total_trips }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOOKINGS -->
+    <!-- ================================================= -->
+
+    <div>
+
+        <h2 class="text-3xl font-bold mb-8">
+
+            Your Trips
+
+        </h2>
+
+        {% if bookings %}
+
+        <div class="space-y-6">
+
+            {% for booking in bookings %}
+
+            <div class="bg-white rounded-3xl shadow-md overflow-hidden">
+
+                <div class="grid grid-cols-1 md:grid-cols-4">
+
+                    <!-- Image -->
+                    <div class="h-64 md:h-full">
+
+                        <img src="/static/uploads/{{ booking.destination.image }}"
+                            alt="{{ booking.destination.name }}"
+                            class="w-full h-full object-cover">
+
+                    </div>
+
+                    <!-- Content -->
+                    <div class="md:col-span-3 p-8">
+
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+                            <!-- Left -->
+                            <div>
+
+                                <h3 class="text-3xl font-bold">
+
+                                    {{ booking.destination.name }}
+
+                                </h3>
+
+                                <p class="text-gray-500 mt-3">
+
+                                    📍 {{ booking.destination.location }}
+
+                                </p>
+
+                                <p class="text-gray-500">
+
+                                    👥 Guests: {{ booking.guests }}
+
+                                </p>
+
+                                <p class="text-gray-500">
+
+                                    📅
+                                    {{ booking.travel_date.strftime('%d %B %Y') }}
+
+                                </p>
+
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+
+                                {% if booking.status == "pending" %}
+
+                                <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
+
+                                    Pending
+
+                                </span>
+
+                                {% elif booking.status == "confirmed" %}
+
+                                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full">
+
+                                    Confirmed
+
+                                </span>
+
+                                {% elif booking.status == "cancelled" %}
+
+                                <span class="bg-red-100 text-red-700 px-4 py-2 rounded-full">
+
+                                    Cancelled
+
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                            <!-- Price -->
+                            <div class="text-right">
+
+                                <p class="text-gray-500">
+                                    Total Paid
+                                </p>
+
+                                <h3 class="text-4xl font-bold text-blue-600 mt-2">
+
+                                    ₹{{ booking.total_price }}
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Cancel -->
+                        {% if booking.status != "cancelled" %}
+
+                        <form action="/cancel-booking/{{ booking.id }}"
+                            method="POST"
+                            class="mt-8">
+
+                            <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition">
+
+                                Cancel Booking
+
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="bg-white rounded-3xl shadow-md p-14 text-center">
+
+            <h3 class="text-3xl font-bold mb-4">
+
+                No Trips Booked Yet
+
+            </h3>
+
+            <p class="text-gray-500 mb-8">
+
+                Explore destinations and book your next adventure.
+
+            </p>
+
+            <a href="/"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition">
+
+                Explore Destinations
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</section>
 
 {% endblock %}

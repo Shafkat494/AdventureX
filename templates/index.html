@@ -1,129 +1,327 @@
 {% extends "base.html" %}
 
+{% block title %}
+AdventureX | Explore Adventures
+{% endblock %}
+
 {% block content %}
 
-<style>
-    .page-title {
-        font-weight: 700;
-        margin-bottom: 25px;
-        color: #222;
-    }
+<!-- ================================================= -->
+<!-- HERO SECTION -->
+<!-- ================================================= -->
 
-    .product-card {
-        border: none;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        transition: all 0.25s ease;
-        background: white;
-        cursor: pointer;
-        height: 100%;
-    }
+<section class="relative bg-cover bg-center h-[85vh]"
+    style="background-image: url('/static/hero.jpg');">
 
-    .product-card:hover {
-        transform: translateY(-6px) scale(1.01);
-        box-shadow: 0 18px 40px rgba(0,0,0,0.15);
-    }
+    <div class="absolute inset-0 bg-black/50"></div>
 
-    .product-img {
-        height: 220px;
-        width: 100%;
-        object-fit: cover;
-        transition: 0.3s;
-    }
+    <div class="relative z-10 flex flex-col justify-center items-center h-full text-center px-6">
 
-    .product-card:hover .product-img {
-        transform: scale(1.05);
-    }
+        <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight">
 
-    .card-body {
-        padding: 16px;
-    }
+            Explore The Wild
 
-    .product-title {
-        font-size: 17px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: #111;
-    }
+        </h1>
 
-    .product-desc {
-        font-size: 13px;
-        color: #777;
-        height: 38px;
-        overflow: hidden;
-        line-height: 1.4;
-    }
+        <p class="text-gray-200 text-lg md:text-2xl mt-6 max-w-3xl">
 
-    .product-price {
-        color: #667eea;
-        font-weight: 700;
-        font-size: 17px;
-        margin-top: 10px;
-    }
+            Book unforgettable trekking, skiing, climbing
+            and adventure experiences across breathtaking destinations.
 
-    .empty-box {
-        text-align: center;
-        padding: 60px 20px;
-        color: #777;
-    }
+        </p>
 
-    .empty-box h4 {
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
+        <div class="mt-8 flex flex-wrap gap-4 justify-center">
 
-    .empty-box p {
-        font-size: 14px;
-    }
-</style>
+            <a href="#destinations"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl text-lg font-medium transition">
 
-<h2 class="page-title">🎨 Student Marketplace</h2>
+                Explore Destinations
 
-<div class="row g-4">
+            </a>
 
-    {% if products %}
-        {% for product in products %}
+            {% if not user %}
 
-        <div class="col-md-4 col-lg-3 d-flex">
+            <a href="/signup"
+                class="bg-white hover:bg-gray-200 text-gray-900 px-8 py-4 rounded-xl text-lg font-medium transition">
 
-            <a href="/product/{{ product.id }}" class="w-100" style="text-decoration: none; color: inherit;">
+                Join AdventureX
 
-                <div class="card product-card">
+            </a>
 
-                    <img src="/static/uploads/{{ product.image }}" class="product-img">
+            {% endif %}
 
-                    <div class="card-body">
-                        <div class="product-title">
-                            {{ product.title }}
-                        </div>
+        </div>
 
-                        <div class="product-desc">
-                            {{ product.description }}
-                        </div>
+    </div>
 
-                        <div class="product-price">
-                            ₹{{ product.price }}
-                        </div>
-                    </div>
+</section>
+
+
+<!-- ================================================= -->
+<!-- CATEGORY SECTION -->
+<!-- ================================================= -->
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+
+    <div class="text-center mb-12">
+
+        <h2 class="text-4xl font-bold">
+            Adventure Categories
+        </h2>
+
+        <p class="text-gray-500 mt-4">
+            Choose your next thrill
+        </p>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
+
+            <div class="text-5xl mb-4">
+                🥾
+            </div>
+
+            <h3 class="text-2xl font-semibold">
+                Trekking
+            </h3>
+
+            <p class="text-gray-500 mt-3">
+                Mountain trails and unforgettable hikes.
+            </p>
+
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
+
+            <div class="text-5xl mb-4">
+                🎿
+            </div>
+
+            <h3 class="text-2xl font-semibold">
+                Skiing
+            </h3>
+
+            <p class="text-gray-500 mt-3">
+                Snow adventures for every level.
+            </p>
+
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
+
+            <div class="text-5xl mb-4">
+                🧗
+            </div>
+
+            <h3 class="text-2xl font-semibold">
+                Climbing
+            </h3>
+
+            <p class="text-gray-500 mt-3">
+                Reach new heights with expert guides.
+            </p>
+
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
+
+            <div class="text-5xl mb-4">
+                🏕️
+            </div>
+
+            <h3 class="text-2xl font-semibold">
+                Camping
+            </h3>
+
+            <p class="text-gray-500 mt-3">
+                Escape into nature and serenity.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- DESTINATIONS -->
+<!-- ================================================= -->
+
+<section id="destinations"
+    class="max-w-7xl mx-auto px-6 py-16">
+
+    <div class="flex justify-between items-center mb-12">
+
+        <div>
+
+            <h2 class="text-4xl font-bold">
+                Popular Destinations
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+                Discover trending adventure experiences
+            </p>
+
+        </div>
+
+    </div>
+
+    {% if destinations %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+        {% for destination in destinations %}
+
+        <div class="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300">
+
+            <!-- Image -->
+            <div class="h-64 overflow-hidden">
+
+                <img src="/static/uploads/{{ destination.image }}"
+                    alt="{{ destination.name }}"
+                    class="w-full h-full object-cover hover:scale-110 transition duration-500">
+
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+
+                <!-- Category -->
+                <div class="flex justify-between items-center mb-4">
+
+                    <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+
+                        {{ destination.category }}
+
+                    </span>
+
+                    <span class="text-gray-500 text-sm">
+
+                        {{ destination.location }}
+
+                    </span>
 
                 </div>
 
-            </a>
+                <!-- Name -->
+                <h3 class="text-2xl font-bold mb-3">
+
+                    {{ destination.name }}
+
+                </h3>
+
+                <!-- Description -->
+                <p class="text-gray-500 line-clamp-3">
+
+                    {{ destination.description[:120] }}...
+
+                </p>
+
+                <!-- Info -->
+                <div class="flex justify-between items-center mt-6">
+
+                    <div>
+
+                        <p class="text-gray-500 text-sm">
+                            Starting From
+                        </p>
+
+                        <p class="text-2xl font-bold text-blue-600">
+
+                            ₹{{ destination.price }}
+
+                        </p>
+
+                    </div>
+
+                    <a href="/destination/{{ destination.slug }}"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition">
+
+                        View Details
+
+                    </a>
+
+                </div>
+
+            </div>
 
         </div>
 
         {% endfor %}
 
+    </div>
+
     {% else %}
 
-        <div class="empty-box">
-            <h4>No products yet 😔</h4>
-            <p>Be the first student to upload something amazing!</p>
-        </div>
+    <div class="bg-white rounded-2xl p-16 text-center shadow-md">
+
+        <h3 class="text-3xl font-bold mb-4">
+
+            No Destinations Yet
+
+        </h3>
+
+        <p class="text-gray-500 mb-8">
+
+            Hosts can start adding adventure destinations now.
+
+        </p>
+
+        {% if user and (user.role == "host" or user.role == "admin") %}
+
+        <a href="/create-destination"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition">
+
+            Create Destination
+
+        </a>
+
+        {% endif %}
+
+    </div>
 
     {% endif %}
 
-</div>
+</section>
+
+
+<!-- ================================================= -->
+<!-- CTA SECTION -->
+<!-- ================================================= -->
+
+<section class="bg-blue-600 mt-20">
+
+    <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+
+        <h2 class="text-4xl md:text-5xl font-bold text-white">
+
+            Your Next Adventure Awaits
+
+        </h2>
+
+        <p class="text-blue-100 text-lg mt-6 max-w-3xl mx-auto">
+
+            Explore breathtaking landscapes, thrilling activities
+            and unforgettable memories with AdventureX.
+
+        </p>
+
+        {% if not user %}
+
+        <a href="/signup"
+            class="inline-block mt-8 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
+
+            Get Started Today
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</section>
 
 {% endblock %}

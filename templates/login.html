@@ -1,82 +1,131 @@
 {% extends "base.html" %}
 
+{% block title %}
+Login | AdventureX
+{% endblock %}
+
 {% block content %}
-<style>
-    body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        min-height: 100vh;
-    }
-    .login-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 85vh;
-    }
-    .login-card {
-        width: 100%;
-        max-width: 420px;
-        padding: 35px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    }
-    .title { text-align: center; font-weight: 700; color: #333; margin-bottom: 10px; }
-    .subtitle { text-align: center; font-size: 14px; color: #777; margin-bottom: 25px; }
-    label { font-weight: 500; display: block; margin-bottom: 5px; }
-    .form-control { border-radius: 12px; padding: 12px; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
-    .btn-custom {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border: none; color: white; border-radius: 12px; padding: 12px;
-        font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px;
-    }
-    .alert-danger {
-        background-color: #f8d7da; color: #842029; padding: 10px;
-        border-radius: 10px; margin-bottom: 20px; text-align: center; border: 1px solid #f5c2c7;
-    }
-    .footer-text { text-align: center; margin-top: 15px; font-size: 14px; }
-</style>
 
-<div class="login-wrapper">
-    <div class="login-card">
-        <h3 class="title">Welcome Back 👋</h3>
-        <p class="subtitle">Login to your CampusCraft account</p>
+<section class="min-h-[85vh] flex items-center justify-center px-6 py-16">
 
-        {% if error %}
-        <div class="alert alert-danger">
-            {{ error }}
-        </div>
-        {% endif %}
+    <div class="w-full max-w-md">
 
-        <form action="/login" method="post">
-            <label>Username</label>
-            <input name="username" class="form-control mb-3" placeholder="Enter username" required>
+        <!-- ================================================= -->
+        <!-- CARD -->
+        <!-- ================================================= -->
 
-            <label>Password</label>
-            <div style="display: flex; gap: 5px; margin-bottom: 20px;">
-                <input id="password" name="password" type="password" class="form-control" placeholder="Enter password" required>
-                <button type="button" style="border-radius:12px; border:1px solid #ddd; padding: 0 10px;" onclick="togglePassword(this)">👁</button>
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+
+            <!-- Top Banner -->
+            <div class="bg-blue-600 px-8 py-10 text-center">
+
+                <h1 class="text-4xl font-bold text-white">
+
+                    Welcome Back
+
+                </h1>
+
+                <p class="text-blue-100 mt-4">
+
+                    Login to continue your adventure journey.
+
+                </p>
+
             </div>
 
-            <button type="submit" class="btn-custom">Login</button>
-        </form>
 
-        <div class="footer-text">
-            Don’t have an account? <a href="/signup" style="color:#667eea; font-weight:600; text-decoration:none;">Signup</a>
+            <!-- ================================================= -->
+            <!-- FORM -->
+            <!-- ================================================= -->
+
+            <div class="p-8">
+
+                {% if error %}
+
+                <div class="bg-red-100 text-red-600 px-4 py-3 rounded-xl mb-6">
+
+                    {{ error }}
+
+                </div>
+
+                {% endif %}
+
+                <form action="/login"
+                    method="POST"
+                    class="space-y-6">
+
+                    <!-- Username -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Username
+
+                        </label>
+
+                        <input type="text"
+                            name="username"
+                            required
+                            placeholder="Enter username"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Password
+
+                        </label>
+
+                        <input type="password"
+                            name="password"
+                            required
+                            placeholder="Enter password"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Button -->
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl text-lg font-semibold transition">
+
+                        Login
+
+                    </button>
+
+                </form>
+
+
+                <!-- ================================================= -->
+                <!-- SIGNUP LINK -->
+                <!-- ================================================= -->
+
+                <div class="text-center mt-8">
+
+                    <p class="text-gray-500">
+
+                        Don't have an account?
+
+                        <a href="/signup"
+                            class="text-blue-600 font-semibold hover:underline">
+
+                            Create Account
+
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </div>
+
         </div>
-    </div>
-</div>
 
-<script>
-function togglePassword(btn) {
-    const field = document.getElementById("password");
-    if (field.type === "password") {
-        field.type = "text";
-        btn.innerText = "🙈";
-    } else {
-        field.type = "password";
-        btn.innerText = "👁";
-    }
-}
-</script>
+    </div>
+
+</section>
+
 {% endblock %}

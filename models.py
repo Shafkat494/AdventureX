@@ -1,82 +1,268 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Float,
+    ForeignKey,
+    Text,
+    DateTime,
+    UniqueConstraint
+)
+
 from sqlalchemy.orm import relationship
 from database import Base
+
+from datetime import datetime
+
+
+# =========================================================
+# USER MODEL
+# =========================================================
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, index=True, nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
+
+    username = Column(String(50), unique=True, nullable=False, index=True)
+
+    email = Column(String(100), unique=True, nullable=False, index=True)
+
     password = Column(String(255), nullable=False)
-    role = Column(String(20), default="customer")
 
-    products = relationship("Product", back_populates="owner")
+    # admin | host | traveler
+    role = Column(String(20), default="traveler")
 
-class Product(Base):
-    __tablename__ = "products"
+    profile_image = Column(String(255), nullable=True)
+
+    bio = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # ================= RELATIONSHIPS =================
+
+    destinations = relationship(
+        "Destination",
+        back_populates="host",
+        cascade="all, delete"
+    )
+
+    bookings = relationship(
+        "Booking",
+        back_populates="traveler",
+        cascade="all, delete"
+    )
+
+    reviews = relationship(
+        "Review",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
+    wishlist_items = relationship(
+        "Wishlist",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
+
+# =========================================================
+# DESTINATION MODEL
+# =========================================================
+
+class Destination(Base):
+    __tablename__ = "destinations"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(255), nullable=False)
-    description = Column(String(1000))
+
+    # Basic Info
+    name = Column(String(255), nullable=False)
+
+    slug = Column(String(255), unique=True, nullable=False)
+
+    location = Column(String(255), nullable=False)
+
+    category = Column(String(100), nullable=False)
+    # trekking
+    # skiing
+    # climbing
+    # camping
+    # rafting
+    # biking
+
+    description = Column(Text, nullable=False)
+
+    # Pricing
     price = Column(Float, nullable=False)
+
+    # Trip Details
+    duration = Column(String(100))
+    difficulty = Column(String(50))
+
+    max_group_size = Column(Integer, default=1)
+
+    included_items = Column(Text)
+
+    itinerary = Column(Text)
+
     image = Column(String(255))
-    owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="products")
-    cart_items = relationship("Cart", back_populates="product")
-    wishlist_items = relationship("Wishlist", back_populates="product")
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-class Order(Base):
-    __tablename__ = "orders"
+    # Foreign Key
+    host_id = Column(Integer, ForeignKey("users.id"))
+
+    # ================= RELATIONSHIPS =================
+
+    host = relationship(
+        "User",
+        back_populates="destinations"
+    )
+
+    bookings = relationship(
+        "Booking",
+        back_populates="destination",
+        cascade="all, delete"
+    )
+
+    reviews = relationship(
+        "Review",
+        back_populates="destination",
+        cascade="all, delete"
+    )
+
+    wishlist_items = relationship(
+        "Wishlist",
+        back_populates="destination",
+        cascade="all, delete"
+    )
+
+
+# =========================================================
+# BOOKING MODEL
+# =========================================================
+
+class Booking(Base):
+    __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    product_id = Column(Integer, ForeignKey("products.id"))
+    traveler_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False
+    )
 
-    status = Column(String, default="pending")
+    destination_id = Column(
+        Integer,
+        ForeignKey("destinations.id"),
+        nullable=False
+    )
 
-    # Relationships
-    user = relationship("User")
-    product = relationship("Product")
+    booking_date = Column(DateTime, default=datetime.utcnow)
 
-class Like(Base):
-    __tablename__ = "likes"
+    travel_date = Column(DateTime, nullable=True)
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    product_id = Column(Integer, ForeignKey("products.id"))
+    guests = Column(Integer, default=1)
 
-    # ✅ ADD THESE
-    product = relationship("Product")
-    user = relationship("User")
+    total_price = Column(Float, nullable=False)
+
+    # pending | confirmed | cancelled | completed
+    status = Column(String(50), default="pending")
+
+    # ================= RELATIONSHIPS =================
+
+    traveler = relationship(
+        "User",
+        back_populates="bookings"
+    )
+
+    destination = relationship(
+        "Destination",
+        back_populates="bookings"
+    )
+
+
+# =========================================================
+# REVIEW MODEL
+# =========================================================
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    destination_id = Column(
+        Integer,
+        ForeignKey("destinations.id"),
+        nullable=False
+    )
+
+    rating = Column(Integer, nullable=False)
+
+    comment = Column(Text)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # ================= RELATIONSHIPS =================
+
+    user = relationship(
+        "User",
+        back_populates="reviews"
+    )
+
+    destination = relationship(
+        "Destination",
+        back_populates="reviews"
+    )
+
+
+# =========================================================
+# WISHLIST MODEL
+# =========================================================
 
 class Wishlist(Base):
     __tablename__ = "wishlist"
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    product_id = Column(Integer, ForeignKey("products.id"))
+    id = Column(Integer, primary_key=True, index=True)
 
-    product = relationship("Product", back_populates="wishlist_items")
-    user = relationship("User")
-
-    __table_args__ = (
-        UniqueConstraint('user_id', 'product_id', name='unique_wishlist'),
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False
     )
 
-class Cart(Base):
-    __tablename__ = "cart"
+    destination_id = Column(
+        Integer,
+        ForeignKey("destinations.id"),
+        nullable=False
+    )
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    product_id = Column(Integer, ForeignKey("products.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
 
-    product = relationship("Product", back_populates="cart_items")
-    user = relationship("User")
+    # ================= RELATIONSHIPS =================
 
+    user = relationship(
+        "User",
+        back_populates="wishlist_items"
+    )
+
+    destination = relationship(
+        "Destination",
+        back_populates="wishlist_items"
+    )
+
+    # Prevent duplicate wishlist items
     __table_args__ = (
-        UniqueConstraint('user_id', 'product_id', name='unique_cart'),
+        UniqueConstraint(
+            'user_id',
+            'destination_id',
+            name='unique_wishlist'
+        ),
     )

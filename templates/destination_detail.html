@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ destination.name }} | AdventureX
+{% endblock %}
+
+{% block content %}
+
+<!-- ================================================= -->
+<!-- HERO IMAGE -->
+<!-- ================================================= -->
+
+<section class="relative h-[70vh] overflow-hidden">
+
+    <img src="/static/uploads/{{ destination.image }}"
+        alt="{{ destination.name }}"
+        class="w-full h-full object-cover">
+
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <div class="absolute bottom-10 left-10 text-white">
+
+        <span class="bg-blue-600 px-4 py-2 rounded-full text-sm font-medium">
+
+            {{ destination.category }}
+
+        </span>
+
+        <h1 class="text-5xl md:text-6xl font-bold mt-4">
+
+            {{ destination.name }}
+
+        </h1>
+
+        <p class="text-xl mt-4 text-gray-200">
+
+            📍 {{ destination.location }}
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- MAIN CONTENT -->
+<!-- ================================================= -->
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        <!-- ================================================= -->
+        <!-- LEFT CONTENT -->
+        <!-- ================================================= -->
+
+        <div class="lg:col-span-2">
+
+            <!-- Overview -->
+            <div class="bg-white rounded-3xl shadow-md p-8 mb-10">
+
+                <h2 class="text-3xl font-bold mb-6">
+
+                    Overview
+
+                </h2>
+
+                <p class="text-gray-600 leading-relaxed text-lg">
+
+                    {{ destination.description }}
+
+                </p>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- QUICK INFO -->
+            <!-- ================================================= -->
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+
+                <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+
+                    <div class="text-4xl mb-3">
+                        ⏳
+                    </div>
+
+                    <p class="text-gray-500 text-sm">
+                        Duration
+                    </p>
+
+                    <h3 class="font-bold text-lg mt-2">
+
+                        {{ destination.duration }}
+
+                    </h3>
+
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+
+                    <div class="text-4xl mb-3">
+                        ⚡
+                    </div>
+
+                    <p class="text-gray-500 text-sm">
+                        Difficulty
+                    </p>
+
+                    <h3 class="font-bold text-lg mt-2">
+
+                        {{ destination.difficulty }}
+
+                    </h3>
+
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+
+                    <div class="text-4xl mb-3">
+                        👥
+                    </div>
+
+                    <p class="text-gray-500 text-sm">
+                        Group Size
+                    </p>
+
+                    <h3 class="font-bold text-lg mt-2">
+
+                        {{ destination.max_group_size }}
+
+                    </h3>
+
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-md p-6 text-center">
+
+                    <div class="text-4xl mb-3">
+                        🏔️
+                    </div>
+
+                    <p class="text-gray-500 text-sm">
+                        Category
+                    </p>
+
+                    <h3 class="font-bold text-lg mt-2">
+
+                        {{ destination.category }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INCLUDED ITEMS -->
+            <!-- ================================================= -->
+
+            <div class="bg-white rounded-3xl shadow-md p-8 mb-10">
+
+                <h2 class="text-3xl font-bold mb-6">
+
+                    Included Items
+
+                </h2>
+
+                <div class="text-gray-600 leading-relaxed whitespace-pre-line">
+
+                    {{ destination.included_items }}
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ITINERARY -->
+            <!-- ================================================= -->
+
+            <div class="bg-white rounded-3xl shadow-md p-8">
+
+                <h2 class="text-3xl font-bold mb-6">
+
+                    Trip Itinerary
+
+                </h2>
+
+                <div class="text-gray-600 leading-relaxed whitespace-pre-line">
+
+                    {{ destination.itinerary }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- BOOKING CARD -->
+        <!-- ================================================= -->
+
+        <div>
+
+            <div class="bg-white rounded-3xl shadow-xl p-8 sticky top-10">
+
+                <div class="mb-6">
+
+                    <p class="text-gray-500">
+
+                        Starting From
+
+                    </p>
+
+                    <h2 class="text-5xl font-bold text-blue-600 mt-2">
+
+                        ₹{{ destination.price }}
+
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        per person
+
+                    </p>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- BOOKING FORM -->
+                <!-- ================================================= -->
+
+                {% if user %}
+
+                <form action="/book/{{ destination.id }}"
+                    method="POST"
+                    class="space-y-6">
+
+                    <!-- Travel Date -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Travel Date
+
+                        </label>
+
+                        <input type="date"
+                            name="travel_date"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Guests -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Guests
+
+                        </label>
+
+                        <input type="number"
+                            name="guests"
+                            min="1"
+                            max="{{ destination.max_group_size }}"
+                            value="1"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-2xl transition">
+
+                        Book Now
+
+                    </button>
+
+                </form>
+
+                {% else %}
+
+                <div class="text-center">
+
+                    <p class="text-gray-500 mb-6">
+
+                        Login to book this destination.
+
+                    </p>
+
+                    <a href="/login"
+                        class="block bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-2xl transition">
+
+                        Login Now
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- EXTRA INFO -->
+                <!-- ================================================= -->
+
+                <div class="border-t mt-8 pt-6 space-y-4 text-gray-600">
+
+                    <div class="flex justify-between">
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <span class="font-medium">
+
+                            {{ destination.duration }}
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>
+                            Difficulty
+                        </span>
+
+                        <span class="font-medium">
+
+                            {{ destination.difficulty }}
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>
+                            Max Group
+                        </span>
+
+                        <span class="font-medium">
+
+                            {{ destination.max_group_size }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

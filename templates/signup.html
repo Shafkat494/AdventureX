@@ -1,207 +1,253 @@
 {% extends "base.html" %}
 
+{% block title %}
+Sign Up | AdventureX
+{% endblock %}
+
 {% block content %}
 
-<style>
-    body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        min-height: 100vh;
-    }
+<section class="min-h-[90vh] flex items-center justify-center px-6 py-16">
 
-    .signup-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 40px 15px;
-    }
+    <div class="w-full max-w-2xl">
 
-    .signup-card {
-        width: 100%;
-        max-width: 450px;
-        padding: 35px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        transition: 0.3s;
-    }
+        <!-- ================================================= -->
+        <!-- CARD -->
+        <!-- ================================================= -->
 
-    .signup-card:hover {
-        transform: translateY(-3px);
-    }
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
 
-    .title {
-        text-align: center;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: #333;
-    }
+            <!-- Top Banner -->
+            <div class="bg-blue-600 px-8 py-10 text-center">
 
-    .subtitle {
-        text-align: center;
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 25px;
-    }
+                <h1 class="text-5xl font-bold text-white">
 
-    label {
-        display: block;
-        font-weight: 500;
-        margin-bottom: 5px;
-        color: #444;
-    }
+                    Join AdventureX
 
-    .form-control {
-        border-radius: 12px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        transition: 0.2s;
-        width: 100%;
-        box-sizing: border-box;
-    }
+                </h1>
 
-    .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 8px rgba(102,126,234,0.4);
-        outline: none;
-    }
+                <p class="text-blue-100 mt-4 text-lg">
 
-    /* Fix for input group alignment */
-    .input-group {
-        display: flex;
-        width: 100%;
-    }
+                    Start exploring trekking, skiing,
+                    climbing and adventure experiences.
 
-    .input-group .form-control {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        flex: 1;
-    }
+                </p>
 
-    .input-group button {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        border: 1px solid #ddd;
-        border-left: none;
-        background: #fff;
-        padding: 0 15px;
-    }
-
-    .btn-custom {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border: none;
-        color: white;
-        border-radius: 12px;
-        padding: 12px;
-        font-weight: 600;
-        transition: 0.3s;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-
-    .btn-custom:hover {
-        opacity: 0.9;
-        transform: scale(1.02);
-    }
-
-    .footer-text {
-        text-align: center;
-        margin-top: 15px;
-        font-size: 14px;
-    }
-
-    .footer-text a {
-        color: #667eea;
-        font-weight: 500;
-        text-decoration: none;
-    }
-
-    .footer-text a:hover {
-        text-decoration: underline;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        color: #842029;
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        border: 1px solid #f5c2c7;
-    }
-</style>
-
-<div class="signup-wrapper">
-
-    <div class="signup-card">
-
-        <h3 class="title">Create Account 🎓</h3>
-        <p class="subtitle">Join CampusCraft marketplace</p>
-
-        {% if error %}
-        <div class="alert alert-danger text-center">
-            {{ error }}
-        </div>
-        {% endif %}
-
-        <form action="/signup" method="post">
-
-            <div class="mb-3">
-                <label class="form-label">Select Role</label>
-                <select name="role" class="form-control" required>
-                    <option value="customer">Customer (Buyer)</option>
-                    <option value="owner">Owner (Seller)</option>
-                </select>
             </div>
 
-            <label for="username">Full Name</label>
-            <input id="username" name="username" class="form-control mb-3" placeholder="Enter your name" required>
 
-            <label for="email">Email</label>
-            <input id="email" type="email" name="email" class="form-control mb-3" placeholder="Enter your email" required>
+            <!-- ================================================= -->
+            <!-- FORM -->
+            <!-- ================================================= -->
 
-            <div class="mb-3">
-                <label for="password">Password</label>
-                <div class="input-group">
-                    <input id="password" name="password" type="password" class="form-control" placeholder="Create password" required>
-                    <button type="button" onclick="togglePassword('password', this)">👁</button>
+            <div class="p-8 md:p-10">
+
+                {% if error %}
+
+                <div class="bg-red-100 text-red-600 px-4 py-3 rounded-xl mb-6">
+
+                    {{ error }}
+
                 </div>
-            </div>
 
-            <div class="mb-3">
-                <label for="confirm_password">Confirm Password</label>
-                <div class="input-group">
-                    <input id="confirm_password" name="confirm_password" type="password" class="form-control" placeholder="Confirm password" required>
-                    <button type="button" onclick="togglePassword('confirm_password', this)">👁</button>
+                {% endif %}
+
+                <form action="/signup"
+                    method="POST"
+                    class="space-y-7">
+
+                    <!-- ================================================= -->
+                    <!-- BASIC INFO -->
+                    <!-- ================================================= -->
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Username -->
+                        <div>
+
+                            <label class="block mb-2 font-medium">
+
+                                Username
+
+                            </label>
+
+                            <input type="text"
+                                name="username"
+                                required
+                                placeholder="Choose username"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+
+                            <label class="block mb-2 font-medium">
+
+                                Email
+
+                            </label>
+
+                            <input type="email"
+                                name="email"
+                                required
+                                placeholder="Enter email"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- PASSWORDS -->
+                    <!-- ================================================= -->
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Password -->
+                        <div>
+
+                            <label class="block mb-2 font-medium">
+
+                                Password
+
+                            </label>
+
+                            <input type="password"
+                                name="password"
+                                required
+                                placeholder="Create password"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+
+                            <label class="block mb-2 font-medium">
+
+                                Confirm Password
+
+                            </label>
+
+                            <input type="password"
+                                name="confirm_password"
+                                required
+                                placeholder="Confirm password"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- ROLE -->
+                    <!-- ================================================= -->
+
+                    <div>
+
+                        <label class="block mb-3 font-medium">
+
+                            Select Account Type
+
+                        </label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <!-- Traveler -->
+                            <label class="border border-gray-300 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+
+                                <input type="radio"
+                                    name="role"
+                                    value="traveler"
+                                    checked
+                                    class="mb-4">
+
+                                <h3 class="text-2xl font-bold mb-2">
+
+                                    Traveler
+
+                                </h3>
+
+                                <p class="text-gray-500">
+
+                                    Book trekking, skiing, climbing
+                                    and adventure experiences.
+
+                                </p>
+
+                            </label>
+
+                            <!-- Host -->
+                            <label class="border border-gray-300 rounded-2xl p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+
+                                <input type="radio"
+                                    name="role"
+                                    value="host"
+                                    class="mb-4">
+
+                                <h3 class="text-2xl font-bold mb-2">
+
+                                    Host
+
+                                </h3>
+
+                                <p class="text-gray-500">
+
+                                    Create and manage adventure
+                                    destinations for travelers.
+
+                                </p>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- BUTTON -->
+                    <!-- ================================================= -->
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl text-lg font-semibold transition">
+
+                        Create Account
+
+                    </button>
+
+                </form>
+
+
+                <!-- ================================================= -->
+                <!-- LOGIN LINK -->
+                <!-- ================================================= -->
+
+                <div class="text-center mt-8">
+
+                    <p class="text-gray-500">
+
+                        Already have an account?
+
+                        <a href="/login"
+                            class="text-blue-600 font-semibold hover:underline">
+
+                            Login
+
+                        </a>
+
+                    </p>
+
                 </div>
+
             </div>
 
-            <button type="submit" class="btn btn-custom w-100">Signup</button>
-
-        </form>
-
-        <div class="footer-text">
-            Already have an account? <a href="/login">Login</a>
         </div>
 
     </div>
 
-</div>
-
-<script>
-function togglePassword(fieldId, btn) {
-    const field = document.getElementById(fieldId);
-
-    if (field.type === "password") {
-        field.type = "text";
-        btn.innerText = "🙈";
-    } else {
-        field.type = "password";
-        btn.innerText = "👁";
-    }
-}
-</script>
+</section>
 
 {% endblock %}

@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Destination | AdventureX
+{% endblock %}
+
+{% block content %}
+
+<section class="max-w-5xl mx-auto px-6 py-16">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-12 text-center">
+
+        <h1 class="text-5xl font-bold text-gray-800">
+
+            Create Adventure Destination
+
+        </h1>
+
+        <p class="text-gray-500 mt-4 text-lg">
+
+            Add trekking, skiing, climbing or camping experiences
+            for travelers around the world.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORM -->
+    <!-- ================================================= -->
+
+    <div class="bg-white shadow-xl rounded-3xl p-10">
+
+        {% if error %}
+
+        <div class="bg-red-100 text-red-600 p-4 rounded-xl mb-6">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+        <form action="/create-destination"
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-8">
+
+            <!-- ================================================= -->
+            <!-- BASIC INFO -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <h2 class="text-2xl font-bold mb-6">
+
+                    Basic Information
+
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Name -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Destination Name
+
+                        </label>
+
+                        <input type="text"
+                            name="name"
+                            required
+                            placeholder="Kashmir Great Lakes Trek"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Location
+
+                        </label>
+
+                        <input type="text"
+                            name="location"
+                            required
+                            placeholder="Kashmir, India"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Category
+
+                        </label>
+
+                        <select name="category"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                            <option value="">Select Category</option>
+
+                            <option value="Trekking">Trekking</option>
+
+                            <option value="Skiing">Skiing</option>
+
+                            <option value="Climbing">Climbing</option>
+
+                            <option value="Camping">Camping</option>
+
+                            <option value="Rafting">Rafting</option>
+
+                            <option value="Biking">Biking</option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Difficulty Level
+
+                        </label>
+
+                        <select name="difficulty"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                            <option value="">Select Difficulty</option>
+
+                            <option value="Easy">Easy</option>
+
+                            <option value="Moderate">Moderate</option>
+
+                            <option value="Hard">Hard</option>
+
+                            <option value="Extreme">Extreme</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DESCRIPTION -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-2 font-medium text-xl">
+
+                    Description
+
+                </label>
+
+                <textarea name="description"
+                    rows="6"
+                    required
+                    placeholder="Describe the adventure experience..."
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TRIP DETAILS -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <h2 class="text-2xl font-bold mb-6">
+
+                    Trip Details
+
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- Price -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Price (₹)
+
+                        </label>
+
+                        <input type="number"
+                            name="price"
+                            step="0.01"
+                            required
+                            placeholder="12000"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Duration -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Duration
+
+                        </label>
+
+                        <input type="text"
+                            name="duration"
+                            required
+                            placeholder="7 Days"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Group Size -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Max Group Size
+
+                        </label>
+
+                        <input type="number"
+                            name="max_group_size"
+                            required
+                            placeholder="15"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INCLUDED ITEMS -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-2 font-medium text-xl">
+
+                    Included Items
+
+                </label>
+
+                <textarea name="included_items"
+                    rows="4"
+                    required
+                    placeholder="Meals, guide, transport, tents..."
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ITINERARY -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-2 font-medium text-xl">
+
+                    Itinerary
+
+                </label>
+
+                <textarea name="itinerary"
+                    rows="6"
+                    required
+                    placeholder="Day 1: Arrival...
+Day 2: Trek begins..."
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- IMAGE -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-2 font-medium text-xl">
+
+                    Destination Image
+
+                </label>
+
+                <input type="file"
+                    name="image"
+                    accept="image/*"
+                    required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white">
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- SUBMIT -->
+            <!-- ================================================= -->
+
+            <div class="pt-4">
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-2xl transition">
+
+                    Create Destination
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}
