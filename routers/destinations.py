@@ -74,9 +74,9 @@ def home(
             user = None
 
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
+        request=request,
+        name="index.html",
+        context={
             "destinations": destinations,
             "user": user
         }
@@ -119,9 +119,9 @@ def create_destination_page(
         )
 
     return templates.TemplateResponse(
-        "create_destination.html",
-        {
-            "request": request,
+        request=request,
+        name="create_destination.html",
+        context={
             "user": user,
             "error": None
         }
@@ -218,9 +218,9 @@ def create_destination(
     if image_extension not in allowed_extensions:
 
         return templates.TemplateResponse(
-            "create_destination.html",
-            {
-                "request": request,
+            request=request,
+            name="create_destination.html",
+            context={
                 "user": user,
                 "error": "Invalid image format"
             }
@@ -308,9 +308,9 @@ def destination_detail(
             user = None
 
     return templates.TemplateResponse(
-        "destination_detail.html",
-        {
-            "request": request,
+        request=request,
+        name="destination_detail.html",
+        context={
             "destination": destination,
             "user": user
         }
