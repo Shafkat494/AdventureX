@@ -10,8 +10,10 @@ AdventureX | Explore Adventures
 <!-- HERO SECTION -->
 <!-- ================================================= -->
 
-<section class="relative bg-cover bg-center h-[85vh]"
-    style="background-image: url('/static/hero.jpg');">
+<section
+    class="relative bg-cover bg-center h-[85vh]"
+    style="background-image: url('/static/hero.jpg');"
+>
 
     <div class="absolute inset-0 bg-black/50"></div>
 
@@ -25,27 +27,28 @@ AdventureX | Explore Adventures
 
         <p class="text-gray-200 text-lg md:text-2xl mt-6 max-w-3xl">
 
-            Book unforgettable trekking, skiing, climbing
-            and adventure experiences across breathtaking destinations.
+            Book unforgettable trekking, skiing,
+            climbing and adventure experiences
+            across breathtaking destinations.
 
         </p>
 
         <div class="mt-8 flex flex-wrap gap-4 justify-center">
 
-            <a href="#destinations"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl text-lg font-medium transition">
-
+            <a
+                href="#destinations"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl text-lg font-medium transition"
+            >
                 Explore Destinations
-
             </a>
 
             {% if not user %}
 
-            <a href="/signup"
-                class="bg-white hover:bg-gray-200 text-gray-900 px-8 py-4 rounded-xl text-lg font-medium transition">
-
+            <a
+                href="/signup"
+                class="bg-white hover:bg-gray-200 text-gray-900 px-8 py-4 rounded-xl text-lg font-medium transition"
+            >
                 Join AdventureX
-
             </a>
 
             {% endif %}
@@ -66,17 +69,22 @@ AdventureX | Explore Adventures
     <div class="text-center mb-12">
 
         <h2 class="text-4xl font-bold">
+
             Adventure Categories
+
         </h2>
 
         <p class="text-gray-500 mt-4">
+
             Choose your next thrill
+
         </p>
 
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 
+        <!-- Trekking -->
         <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
 
             <div class="text-5xl mb-4">
@@ -84,15 +92,20 @@ AdventureX | Explore Adventures
             </div>
 
             <h3 class="text-2xl font-semibold">
+
                 Trekking
+
             </h3>
 
             <p class="text-gray-500 mt-3">
+
                 Mountain trails and unforgettable hikes.
+
             </p>
 
         </div>
 
+        <!-- Skiing -->
         <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
 
             <div class="text-5xl mb-4">
@@ -100,15 +113,20 @@ AdventureX | Explore Adventures
             </div>
 
             <h3 class="text-2xl font-semibold">
+
                 Skiing
+
             </h3>
 
             <p class="text-gray-500 mt-3">
+
                 Snow adventures for every level.
+
             </p>
 
         </div>
 
+        <!-- Climbing -->
         <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
 
             <div class="text-5xl mb-4">
@@ -116,15 +134,20 @@ AdventureX | Explore Adventures
             </div>
 
             <h3 class="text-2xl font-semibold">
+
                 Climbing
+
             </h3>
 
             <p class="text-gray-500 mt-3">
+
                 Reach new heights with expert guides.
+
             </p>
 
         </div>
 
+        <!-- Camping -->
         <div class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
 
             <div class="text-5xl mb-4">
@@ -132,11 +155,15 @@ AdventureX | Explore Adventures
             </div>
 
             <h3 class="text-2xl font-semibold">
+
                 Camping
+
             </h3>
 
             <p class="text-gray-500 mt-3">
+
                 Escape into nature and serenity.
+
             </p>
 
         </div>
@@ -150,19 +177,25 @@ AdventureX | Explore Adventures
 <!-- DESTINATIONS -->
 <!-- ================================================= -->
 
-<section id="destinations"
-    class="max-w-7xl mx-auto px-6 py-16">
+<section
+    id="destinations"
+    class="max-w-7xl mx-auto px-6 py-16"
+>
 
     <div class="flex justify-between items-center mb-12">
 
         <div>
 
             <h2 class="text-4xl font-bold">
+
                 Popular Destinations
+
             </h2>
 
             <p class="text-gray-500 mt-2">
+
                 Discover trending adventure experiences
+
             </p>
 
         </div>
@@ -180,9 +213,11 @@ AdventureX | Explore Adventures
             <!-- Image -->
             <div class="h-64 overflow-hidden">
 
-                <img src="/static/uploads/{{ destination.image }}"
+                <img
+                    src="/static/uploads/{{ destination.image }}"
                     alt="{{ destination.name }}"
-                    class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                    class="w-full h-full object-cover hover:scale-110 transition duration-500"
+                >
 
             </div>
 
@@ -216,17 +251,19 @@ AdventureX | Explore Adventures
                 <!-- Description -->
                 <p class="text-gray-500 line-clamp-3">
 
-                    {{ destination.description[:120] }}...
+                    {{ destination.description | truncate(120) }}
 
                 </p>
 
-                <!-- Info -->
+                <!-- Price -->
                 <div class="flex justify-between items-center mt-6">
 
                     <div>
 
                         <p class="text-gray-500 text-sm">
+
                             Starting From
+
                         </p>
 
                         <p class="text-2xl font-bold text-blue-600">
@@ -237,11 +274,11 @@ AdventureX | Explore Adventures
 
                     </div>
 
-                    <a href="/destination/{{ destination.slug }}"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition">
-
+                    <a
+                        href="/destination/{{ destination.slug }}"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition"
+                    >
                         View Details
-
                     </a>
 
                 </div>
@@ -270,13 +307,13 @@ AdventureX | Explore Adventures
 
         </p>
 
-        {% if user and (user.role == "host" or user.role == "admin") %}
+        {% if user and user.role in ["host", "admin"] %}
 
-        <a href="/create-destination"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition">
-
+        <a
+            href="/create-destination"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition"
+        >
             Create Destination
-
         </a>
 
         {% endif %}
@@ -304,18 +341,19 @@ AdventureX | Explore Adventures
 
         <p class="text-blue-100 text-lg mt-6 max-w-3xl mx-auto">
 
-            Explore breathtaking landscapes, thrilling activities
-            and unforgettable memories with AdventureX.
+            Explore breathtaking landscapes,
+            thrilling activities and unforgettable memories
+            with AdventureX.
 
         </p>
 
         {% if not user %}
 
-        <a href="/signup"
-            class="inline-block mt-8 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
-
+        <a
+            href="/signup"
+            class="inline-block mt-8 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition"
+        >
             Get Started Today
-
         </a>
 
         {% endif %}

@@ -57,16 +57,21 @@ def home(
     db: Session = Depends(get_db)
 ):
 
-    destinations = db.query(Destination).all()
+    destinations = db.query(Destination).order_by(
+        Destination.id.desc()
+    ).all()
 
     user = None
 
     user_id = request.cookies.get("user")
 
     if user_id:
-        user = db.query(User).filter(
-            User.id == int(user_id)
-        ).first()
+        try:
+            user = db.query(User).filter(
+                User.id == int(user_id)
+            ).first()
+        except:
+            user = None
 
     return templates.TemplateResponse(
         "index.html",
@@ -90,7 +95,6 @@ def create_destination_page(
 
     user_id = request.cookies.get("user")
 
-    # Not logged in
     if not user_id:
         return RedirectResponse(
             "/login",
@@ -101,7 +105,13 @@ def create_destination_page(
         User.id == int(user_id)
     ).first()
 
-    # Only hosts/admins allowed
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    # Only hosts/admins
     if user.role not in ["host", "admin"]:
         return RedirectResponse(
             "/",
@@ -148,7 +158,6 @@ def create_destination(
 
     user_id = request.cookies.get("user")
 
-    # Not logged in
     if not user_id:
         return RedirectResponse(
             "/login",
@@ -159,7 +168,12 @@ def create_destination(
         User.id == int(user_id)
     ).first()
 
-    # Only hosts/admins allowed
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
     if user.role not in ["host", "admin"]:
         return RedirectResponse(
             "/",
@@ -170,19 +184,51 @@ def create_destination(
     # CREATE SLUG
     # =====================================================
 
-    slug = re.sub(
+    base_slug = re.sub(
         r'[^a-zA-Z0-9]+',
         '-',
         name.lower()
     ).strip('-')
 
+    slug = base_slug
+
+    counter = 1
+
+    while db.query(Destination).filter(
+        Destination.slug == slug
+    ).first():
+
+        slug = f"{base_slug}-{counter}"
+
+        counter += 1
+
     # =====================================================
     # IMAGE SAVE
     # =====================================================
 
-    image_extension = image.filename.split(".")[-1]
+    allowed_extensions = [
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+    ]
 
-    unique_filename = f"{uuid.uuid4()}.{image_extension}"
+    image_extension = image.filename.split(".")[-1].lower()
+
+    if image_extension not in allowed_extensions:
+
+        return templates.TemplateResponse(
+            "create_destination.html",
+            {
+                "request": request,
+                "user": user,
+                "error": "Invalid image format"
+            }
+        )
+
+    unique_filename = (
+        f"{uuid.uuid4()}.{image_extension}"
+    )
 
     image_path = os.path.join(
         UPLOAD_DIR,
@@ -190,7 +236,10 @@ def create_destination(
     )
 
     with open(image_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+        shutil.copyfileobj(
+            image.file,
+            buffer
+        )
 
     # =====================================================
     # CREATE DESTINATION
@@ -213,6 +262,7 @@ def create_destination(
     )
 
     db.add(new_destination)
+
     db.commit()
 
     return RedirectResponse(
@@ -222,10 +272,13 @@ def create_destination(
 
 
 # =========================================================
-# DESTINATION DETAILS PAGE
+# DESTINATION DETAILS
 # =========================================================
 
-@router.get("/destination/{slug}", response_class=HTMLResponse)
+@router.get(
+    "/destination/{slug}",
+    response_class=HTMLResponse
+)
 def destination_detail(
     slug: str,
     request: Request,
@@ -247,9 +300,12 @@ def destination_detail(
     user_id = request.cookies.get("user")
 
     if user_id:
-        user = db.query(User).filter(
-            User.id == int(user_id)
-        ).first()
+        try:
+            user = db.query(User).filter(
+                User.id == int(user_id)
+            ).first()
+        except:
+            user = None
 
     return templates.TemplateResponse(
         "destination_detail.html",
@@ -290,10 +346,9 @@ def delete_destination(
             status_code=302
         )
 
-    # Only owner/admin can delete
-    if (
-        destination.host_id != int(user_id)
-    ):
+    # Only owner can delete
+    if destination.host_id != int(user_id):
+
         return RedirectResponse(
             "/dashboard",
             status_code=302
@@ -308,7 +363,7 @@ def delete_destination(
     if os.path.exists(image_path):
         os.remove(image_path)
 
-    # Delete database record
+    # Delete destination
     db.delete(destination)
 
     db.commit()
