@@ -43,14 +43,20 @@ def dashboard(
 
     user_id = request.cookies.get("user")
 
-    # User not logged in
+    # =====================================================
+    # NOT LOGGED IN
+    # =====================================================
+
     if not user_id:
         return RedirectResponse(
             "/login",
             status_code=302
         )
 
-    # Get current user
+    # =====================================================
+    # GET USER
+    # =====================================================
+
     user = db.query(User).filter(
         User.id == int(user_id)
     ).first()
@@ -62,29 +68,46 @@ def dashboard(
         )
 
     # =====================================================
-    # HOST DASHBOARD
+    # HOST / ADMIN DASHBOARD
     # =====================================================
 
     if user.role in ["host", "admin"]:
 
+        # Get destinations
         destinations = db.query(Destination).filter(
             Destination.host_id == user.id
         ).all()
 
+        # Get bookings
         bookings = db.query(Booking).join(
             Destination,
             Booking.destination_id == Destination.id
         ).filter(
             Destination.host_id == user.id
+        ).order_by(
+            Booking.id.desc()
         ).all()
 
+        # Stats
         total_destinations = len(destinations)
 
         total_bookings = len(bookings)
 
         total_revenue = sum(
-            booking.total_price for booking in bookings
+            booking.total_price
+            for booking in bookings
+            if booking.status in ["confirmed", "completed"]
         )
+
+        pending_bookings = len([
+            booking for booking in bookings
+            if booking.status == "pending"
+        ])
+
+        completed_bookings = len([
+            booking for booking in bookings
+            if booking.status == "completed"
+        ])
 
         return templates.TemplateResponse(
             "dashboard.html",
@@ -99,6 +122,9 @@ def dashboard(
                 "total_bookings": total_bookings,
                 "total_revenue": total_revenue,
 
+                "pending_bookings": pending_bookings,
+                "completed_bookings": completed_bookings,
+
                 "dashboard_type": "host"
             }
         )
@@ -109,9 +135,21 @@ def dashboard(
 
     traveler_bookings = db.query(Booking).filter(
         Booking.traveler_id == user.id
+    ).order_by(
+        Booking.id.desc()
     ).all()
 
     total_trips = len(traveler_bookings)
+
+    completed_trips = len([
+        booking for booking in traveler_bookings
+        if booking.status == "completed"
+    ])
+
+    upcoming_trips = len([
+        booking for booking in traveler_bookings
+        if booking.status in ["pending", "confirmed"]
+    ])
 
     return templates.TemplateResponse(
         "dashboard.html",
@@ -122,7 +160,196 @@ def dashboard(
             "bookings": traveler_bookings,
 
             "total_trips": total_trips,
+            "completed_trips": completed_trips,
+            "upcoming_trips": upcoming_trips,
 
             "dashboard_type": "traveler"
         }
+    )
+
+
+# =========================================================
+# CONFIRM BOOKING
+# =========================================================
+
+@router.post("/confirm-booking/{booking_id}")
+def confirm_booking(
+    booking_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user_id = request.cookies.get("user")
+
+    # Not logged in
+    if not user_id:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    # Get booking
+    booking = db.query(Booking).filter(
+        Booking.id == booking_id
+    ).first()
+
+    if not booking:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Get destination
+    destination = db.query(Destination).filter(
+        Destination.id == booking.destination_id
+    ).first()
+
+    if not destination:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Only host/admin can confirm
+    if destination.host_id != int(user_id):
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Update status
+    booking.status = "confirmed"
+
+    db.commit()
+
+    return RedirectResponse(
+        "/dashboard",
+        status_code=303
+    )
+
+
+# =========================================================
+# COMPLETE BOOKING
+# =========================================================
+
+@router.post("/complete-booking/{booking_id}")
+def complete_booking(
+    booking_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user_id = request.cookies.get("user")
+
+    # Not logged in
+    if not user_id:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    # Get booking
+    booking = db.query(Booking).filter(
+        Booking.id == booking_id
+    ).first()
+
+    if not booking:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Get destination
+    destination = db.query(Destination).filter(
+        Destination.id == booking.destination_id
+    ).first()
+
+    if not destination:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Only host/admin can complete
+    if destination.host_id != int(user_id):
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Only confirmed bookings can complete
+    if booking.status != "confirmed":
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Update status
+    booking.status = "completed"
+
+    db.commit()
+
+    return RedirectResponse(
+        "/dashboard",
+        status_code=303
+    )
+
+
+# =========================================================
+# CANCEL BOOKING
+# =========================================================
+
+@router.post("/cancel-booking/{booking_id}")
+def cancel_booking(
+    booking_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user_id = request.cookies.get("user")
+
+    # Not logged in
+    if not user_id:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    # Get booking
+    booking = db.query(Booking).filter(
+        Booking.id == booking_id
+    ).first()
+
+    if not booking:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Get destination
+    destination = db.query(Destination).filter(
+        Destination.id == booking.destination_id
+    ).first()
+
+    if not destination:
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Only host/admin can cancel
+    if destination.host_id != int(user_id):
+        return RedirectResponse(
+            "/dashboard",
+            status_code=302
+        )
+
+    # Update status
+    booking.status = "cancelled"
+
+    db.commit()
+
+    return RedirectResponse(
+        "/dashboard",
+        status_code=303
     )

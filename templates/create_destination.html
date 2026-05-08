@@ -6,24 +6,24 @@ Create Destination | AdventureX
 
 {% block content %}
 
-<section class="max-w-5xl mx-auto px-6 py-16">
+<section class="max-w-6xl mx-auto px-6 py-16">
 
     <!-- ================================================= -->
     <!-- HEADER -->
     <!-- ================================================= -->
 
-    <div class="mb-12 text-center">
+    <div class="mb-14 text-center">
 
-        <h1 class="text-5xl font-bold text-gray-800">
+        <h1 class="text-5xl md:text-6xl font-bold text-gray-800">
 
             Create Adventure Destination
 
         </h1>
 
-        <p class="text-gray-500 mt-4 text-lg">
+        <p class="text-gray-500 mt-5 text-lg max-w-3xl mx-auto leading-relaxed">
 
-            Add trekking, skiing, climbing or camping experiences
-            for travelers around the world.
+            Create immersive travel experiences with stunning galleries,
+            detailed itineraries, and booking-ready adventure listings.
 
         </p>
 
@@ -31,14 +31,15 @@ Create Destination | AdventureX
 
 
     <!-- ================================================= -->
-    <!-- FORM -->
+    <!-- FORM CARD -->
     <!-- ================================================= -->
 
-    <div class="bg-white shadow-xl rounded-3xl p-10">
+    <div class="bg-white shadow-2xl rounded-[2rem] p-8 md:p-12">
 
+        <!-- Error -->
         {% if error %}
 
-        <div class="bg-red-100 text-red-600 p-4 rounded-xl mb-6">
+        <div class="bg-red-100 border border-red-200 text-red-600 p-5 rounded-2xl mb-8">
 
             {{ error }}
 
@@ -46,10 +47,11 @@ Create Destination | AdventureX
 
         {% endif %}
 
+        <!-- FORM -->
         <form action="/create-destination"
             method="POST"
             enctype="multipart/form-data"
-            class="space-y-8">
+            class="space-y-12">
 
             <!-- ================================================= -->
             <!-- BASIC INFO -->
@@ -57,18 +59,28 @@ Create Destination | AdventureX
 
             <div>
 
-                <h2 class="text-2xl font-bold mb-6">
+                <div class="mb-8">
 
-                    Basic Information
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </h2>
+                        Basic Information
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        Add the core details about your adventure experience.
+
+                    </p>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                     <!-- Name -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Destination Name
 
@@ -78,14 +90,14 @@ Create Destination | AdventureX
                             name="name"
                             required
                             placeholder="Kashmir Great Lakes Trek"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
 
                     <!-- Location -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Location
 
@@ -95,14 +107,14 @@ Create Destination | AdventureX
                             name="location"
                             required
                             placeholder="Kashmir, India"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
 
                     <!-- Category -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Category
 
@@ -110,20 +122,15 @@ Create Destination | AdventureX
 
                         <select name="category"
                             required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                             <option value="">Select Category</option>
 
                             <option value="Trekking">Trekking</option>
-
                             <option value="Skiing">Skiing</option>
-
                             <option value="Climbing">Climbing</option>
-
                             <option value="Camping">Camping</option>
-
                             <option value="Rafting">Rafting</option>
-
                             <option value="Biking">Biking</option>
 
                         </select>
@@ -133,7 +140,7 @@ Create Destination | AdventureX
                     <!-- Difficulty -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Difficulty Level
 
@@ -141,16 +148,13 @@ Create Destination | AdventureX
 
                         <select name="difficulty"
                             required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                             <option value="">Select Difficulty</option>
 
                             <option value="Easy">Easy</option>
-
                             <option value="Moderate">Moderate</option>
-
                             <option value="Hard">Hard</option>
-
                             <option value="Extreme">Extreme</option>
 
                         </select>
@@ -168,17 +172,27 @@ Create Destination | AdventureX
 
             <div>
 
-                <label class="block mb-2 font-medium text-xl">
+                <div class="mb-5">
 
-                    Description
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </label>
+                        Description
+
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        Explain what makes this destination unique.
+
+                    </p>
+
+                </div>
 
                 <textarea name="description"
-                    rows="6"
+                    rows="7"
                     required
-                    placeholder="Describe the adventure experience..."
-                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    placeholder="Describe the complete adventure experience..."
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-5 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
 
             </div>
 
@@ -189,18 +203,28 @@ Create Destination | AdventureX
 
             <div>
 
-                <h2 class="text-2xl font-bold mb-6">
+                <div class="mb-8">
 
-                    Trip Details
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </h2>
+                        Trip Details
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        Add pricing and trip information.
+
+                    </p>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
                     <!-- Price -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Price (₹)
 
@@ -211,14 +235,14 @@ Create Destination | AdventureX
                             step="0.01"
                             required
                             placeholder="12000"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
 
                     <!-- Duration -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Duration
 
@@ -228,14 +252,14 @@ Create Destination | AdventureX
                             name="duration"
                             required
                             placeholder="7 Days"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
 
                     <!-- Group Size -->
                     <div>
 
-                        <label class="block mb-2 font-medium">
+                        <label class="block mb-3 font-semibold text-gray-700">
 
                             Max Group Size
 
@@ -245,7 +269,7 @@ Create Destination | AdventureX
                             name="max_group_size"
                             required
                             placeholder="15"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
 
@@ -260,17 +284,21 @@ Create Destination | AdventureX
 
             <div>
 
-                <label class="block mb-2 font-medium text-xl">
+                <div class="mb-5">
 
-                    Included Items
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </label>
+                        Included Items
+
+                    </h2>
+
+                </div>
 
                 <textarea name="included_items"
-                    rows="4"
+                    rows="5"
                     required
-                    placeholder="Meals, guide, transport, tents..."
-                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    placeholder="Meals, transport, guide, tents, permits..."
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-5 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
 
             </div>
 
@@ -281,39 +309,108 @@ Create Destination | AdventureX
 
             <div>
 
-                <label class="block mb-2 font-medium text-xl">
+                <div class="mb-5">
 
-                    Itinerary
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </label>
+                        Trip Itinerary
+
+                    </h2>
+
+                </div>
 
                 <textarea name="itinerary"
-                    rows="6"
+                    rows="8"
                     required
                     placeholder="Day 1: Arrival...
-Day 2: Trek begins..."
-                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+Day 2: Trek Begins..."
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-5 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
 
             </div>
 
 
             <!-- ================================================= -->
-            <!-- IMAGE -->
+            <!-- HERO IMAGE -->
             <!-- ================================================= -->
 
             <div>
 
-                <label class="block mb-2 font-medium text-xl">
+                <div class="mb-5">
 
-                    Destination Image
+                    <h2 class="text-3xl font-bold text-gray-800">
 
-                </label>
+                        Hero Image
 
-                <input type="file"
-                    name="image"
-                    accept="image/*"
-                    required
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white">
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        This image appears on cards, banners, and the destination hero section.
+
+                    </p>
+
+                </div>
+
+                <div class="border-2 border-dashed border-gray-300 rounded-3xl p-8 bg-gray-50">
+
+                    <input type="file"
+                        name="image"
+                        accept="image/*"
+                        required
+                        class="w-full text-gray-600">
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- GALLERY IMAGES -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <div class="mb-5">
+
+                    <h2 class="text-3xl font-bold text-gray-800">
+
+                        Gallery Images
+
+                    </h2>
+
+                    <p class="text-gray-500 mt-2">
+
+                        Upload multiple high-quality images for your destination gallery.
+
+                    </p>
+
+                </div>
+
+                <div class="border-2 border-dashed border-gray-300 rounded-3xl p-8 bg-gray-50">
+
+                    <input type="file"
+                        name="gallery_images"
+                        accept="image/*"
+                        multiple
+                        class="w-full text-gray-600">
+
+                    <div class="mt-5 text-sm text-gray-500 space-y-2">
+
+                        <p>
+                            • You can select multiple images
+                        </p>
+
+                        <p>
+                            • Supported formats: JPG, PNG, WEBP
+                        </p>
+
+                        <p>
+                            • Recommended: Landscape images with high resolution
+                        </p>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -325,7 +422,7 @@ Day 2: Trek begins..."
             <div class="pt-4">
 
                 <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-2xl transition">
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold py-5 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl">
 
                     Create Destination
 

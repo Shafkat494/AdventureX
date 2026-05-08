@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Destination | AdventureX
+{% endblock %}
+
+{% block content %}
+
+<section class="max-w-5xl mx-auto px-6 py-16">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-12 text-center">
+
+        <h1 class="text-5xl font-bold text-gray-800">
+
+            Edit Destination
+
+        </h1>
+
+        <p class="text-gray-500 mt-4 text-lg">
+
+            Update your adventure experience information.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORM CARD -->
+    <!-- ================================================= -->
+
+    <div class="bg-white shadow-xl rounded-3xl p-10">
+
+        {% if error %}
+
+        <div class="bg-red-100 text-red-600 p-4 rounded-xl mb-8">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+        <form action="/edit-destination/{{ destination.id }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="space-y-10">
+
+            <!-- ================================================= -->
+            <!-- BASIC INFO -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <h2 class="text-2xl font-bold mb-6">
+
+                    Basic Information
+
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Name -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Destination Name
+
+                        </label>
+
+                        <input type="text"
+                            name="name"
+                            value="{{ destination.name }}"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Location
+
+                        </label>
+
+                        <input type="text"
+                            name="location"
+                            value="{{ destination.location }}"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Category
+
+                        </label>
+
+                        <select name="category"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                            <option value="Trekking"
+                                {% if destination.category == "Trekking" %}selected{% endif %}>
+                                Trekking
+                            </option>
+
+                            <option value="Skiing"
+                                {% if destination.category == "Skiing" %}selected{% endif %}>
+                                Skiing
+                            </option>
+
+                            <option value="Climbing"
+                                {% if destination.category == "Climbing" %}selected{% endif %}>
+                                Climbing
+                            </option>
+
+                            <option value="Camping"
+                                {% if destination.category == "Camping" %}selected{% endif %}>
+                                Camping
+                            </option>
+
+                            <option value="Rafting"
+                                {% if destination.category == "Rafting" %}selected{% endif %}>
+                                Rafting
+                            </option>
+
+                            <option value="Biking"
+                                {% if destination.category == "Biking" %}selected{% endif %}>
+                                Biking
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Difficulty Level
+
+                        </label>
+
+                        <select name="difficulty"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                            <option value="Easy"
+                                {% if destination.difficulty == "Easy" %}selected{% endif %}>
+                                Easy
+                            </option>
+
+                            <option value="Moderate"
+                                {% if destination.difficulty == "Moderate" %}selected{% endif %}>
+                                Moderate
+                            </option>
+
+                            <option value="Hard"
+                                {% if destination.difficulty == "Hard" %}selected{% endif %}>
+                                Hard
+                            </option>
+
+                            <option value="Extreme"
+                                {% if destination.difficulty == "Extreme" %}selected{% endif %}>
+                                Extreme
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DESCRIPTION -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-3 font-medium text-xl">
+
+                    Description
+
+                </label>
+
+                <textarea name="description"
+                    rows="6"
+                    required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ destination.description }}</textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TRIP DETAILS -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <h2 class="text-2xl font-bold mb-6">
+
+                    Trip Details
+
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- Price -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Price (₹)
+
+                        </label>
+
+                        <input type="number"
+                            name="price"
+                            step="0.01"
+                            value="{{ destination.price }}"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Duration -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Duration
+
+                        </label>
+
+                        <input type="text"
+                            name="duration"
+                            value="{{ destination.duration }}"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                    <!-- Group Size -->
+                    <div>
+
+                        <label class="block mb-2 font-medium">
+
+                            Max Group Size
+
+                        </label>
+
+                        <input type="number"
+                            name="max_group_size"
+                            value="{{ destination.max_group_size }}"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- INCLUDED ITEMS -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-3 font-medium text-xl">
+
+                    Included Items
+
+                </label>
+
+                <textarea name="included_items"
+                    rows="4"
+                    required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ destination.included_items }}</textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ITINERARY -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-3 font-medium text-xl">
+
+                    Itinerary
+
+                </label>
+
+                <textarea name="itinerary"
+                    rows="6"
+                    required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ destination.itinerary }}</textarea>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CURRENT COVER IMAGE -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-4 font-medium text-xl">
+
+                    Current Cover Image
+
+                </label>
+
+                <div class="overflow-hidden rounded-3xl shadow-md">
+
+                    <img src="/static/uploads/{{ destination.image }}"
+                        alt="{{ destination.name }}"
+                        class="w-full h-80 object-cover">
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- NEW COVER IMAGE -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-3 font-medium text-xl">
+
+                    Replace Cover Image
+
+                </label>
+
+                <input type="file"
+                    name="image"
+                    accept="image/*"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white">
+
+                <p class="text-sm text-gray-500 mt-2">
+
+                    Leave empty to keep the current image.
+
+                </p>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CURRENT GALLERY -->
+            <!-- ================================================= -->
+
+            {% if destination.gallery_images %}
+
+            <div>
+
+                <div class="flex items-center justify-between mb-6">
+
+                    <h2 class="text-2xl font-bold">
+
+                        Current Gallery
+
+                    </h2>
+
+                    <p class="text-gray-500">
+
+                        {{ destination.gallery_images|length }} Images
+
+                    </p>
+
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {% for gallery in destination.gallery_images %}
+
+                    <div class="relative overflow-hidden rounded-2xl shadow-md">
+
+                        <!-- IMAGE -->
+                        <img src="/static/uploads/{{ gallery.image }}"
+                            alt="{{ destination.name }}"
+                            class="w-full h-56 object-cover">
+
+                        <!-- DELETE BUTTON -->
+                        <form action="/delete-gallery-image/{{ gallery.id }}"
+                            method="POST"
+                            class="absolute top-3 right-3">
+
+                            <button type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm transition shadow-md">
+
+                                Delete
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ================================================= -->
+            <!-- ADD MORE GALLERY IMAGES -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label class="block mb-3 font-medium text-xl">
+
+                    Add More Gallery Images
+
+                </label>
+
+                <input type="file"
+                    name="gallery_images"
+                    accept="image/*"
+                    multiple
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white">
+
+                <p class="text-sm text-gray-500 mt-2">
+
+                    You can upload multiple new images.
+
+                </p>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- ACTION BUTTONS -->
+            <!-- ================================================= -->
+
+            <div class="flex flex-col md:flex-row gap-4 pt-6">
+
+                <!-- Update -->
+                <button type="submit"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 rounded-2xl transition">
+
+                    Update Destination
+
+                </button>
+
+                <!-- Cancel -->
+                <a href="/dashboard"
+                    class="flex-1 text-center bg-gray-200 hover:bg-gray-300 text-gray-800 text-lg font-semibold py-4 rounded-2xl transition">
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

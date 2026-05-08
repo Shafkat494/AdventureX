@@ -10,6 +10,7 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.orm import relationship
+
 from database import Base
 
 from datetime import datetime
@@ -24,22 +25,49 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    username = Column(String(50), unique=True, nullable=False, index=True)
+    username = Column(
+        String(50),
+        unique=True,
+        nullable=False,
+        index=True
+    )
 
-    email = Column(String(100), unique=True, nullable=False, index=True)
+    email = Column(
+        String(100),
+        unique=True,
+        nullable=False,
+        index=True
+    )
 
-    password = Column(String(255), nullable=False)
+    password = Column(
+        String(255),
+        nullable=False
+    )
 
     # admin | host | traveler
-    role = Column(String(20), default="traveler")
+    role = Column(
+        String(20),
+        default="traveler"
+    )
 
-    profile_image = Column(String(255), nullable=True)
+    profile_image = Column(
+        String(255),
+        nullable=True
+    )
 
-    bio = Column(Text, nullable=True)
+    bio = Column(
+        Text,
+        nullable=True
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
 
-    # ================= RELATIONSHIPS =================
+    # =====================================================
+    # RELATIONSHIPS
+    # =====================================================
 
     destinations = relationship(
         "Destination",
@@ -73,46 +101,101 @@ class User(Base):
 class Destination(Base):
     __tablename__ = "destinations"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-    # Basic Info
-    name = Column(String(255), nullable=False)
+    # =====================================================
+    # BASIC INFO
+    # =====================================================
 
-    slug = Column(String(255), unique=True, nullable=False)
+    name = Column(
+        String(255),
+        nullable=False
+    )
 
-    location = Column(String(255), nullable=False)
+    slug = Column(
+        String(255),
+        unique=True,
+        nullable=False
+    )
 
-    category = Column(String(100), nullable=False)
-    # trekking
-    # skiing
-    # climbing
-    # camping
-    # rafting
-    # biking
+    location = Column(
+        String(255),
+        nullable=False
+    )
 
-    description = Column(Text, nullable=False)
+    category = Column(
+        String(100),
+        nullable=False
+    )
 
-    # Pricing
-    price = Column(Float, nullable=False)
+    description = Column(
+        Text,
+        nullable=False
+    )
 
-    # Trip Details
-    duration = Column(String(100))
-    difficulty = Column(String(50))
+    # =====================================================
+    # PRICING
+    # =====================================================
 
-    max_group_size = Column(Integer, default=1)
+    price = Column(
+        Float,
+        nullable=False
+    )
 
-    included_items = Column(Text)
+    # =====================================================
+    # TRIP DETAILS
+    # =====================================================
 
-    itinerary = Column(Text)
+    duration = Column(
+        String(100)
+    )
 
-    image = Column(String(255))
+    difficulty = Column(
+        String(50)
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    max_group_size = Column(
+        Integer,
+        default=1
+    )
 
-    # Foreign Key
-    host_id = Column(Integer, ForeignKey("users.id"))
+    included_items = Column(
+        Text
+    )
 
-    # ================= RELATIONSHIPS =================
+    itinerary = Column(
+        Text
+    )
+
+    # =====================================================
+    # MAIN COVER IMAGE
+    # =====================================================
+
+    image = Column(
+        String(255)
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    # =====================================================
+    # FOREIGN KEY
+    # =====================================================
+
+    host_id = Column(
+        Integer,
+        ForeignKey("users.id")
+    )
+
+    # =====================================================
+    # RELATIONSHIPS
+    # =====================================================
 
     host = relationship(
         "User",
@@ -137,6 +220,55 @@ class Destination(Base):
         cascade="all, delete"
     )
 
+    # =====================================================
+    # GALLERY IMAGES
+    # =====================================================
+
+    gallery_images = relationship(
+        "DestinationImage",
+        back_populates="destination",
+        cascade="all, delete"
+    )
+
+
+# =========================================================
+# DESTINATION IMAGE MODEL
+# =========================================================
+
+class DestinationImage(Base):
+    __tablename__ = "destination_images"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    image = Column(
+        String(255),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    destination_id = Column(
+        Integer,
+        ForeignKey("destinations.id"),
+        nullable=False
+    )
+
+    # =====================================================
+    # RELATIONSHIP
+    # =====================================================
+
+    destination = relationship(
+        "Destination",
+        back_populates="gallery_images"
+    )
+
 
 # =========================================================
 # BOOKING MODEL
@@ -145,7 +277,11 @@ class Destination(Base):
 class Booking(Base):
     __tablename__ = "bookings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     traveler_id = Column(
         Integer,
@@ -159,18 +295,35 @@ class Booking(Base):
         nullable=False
     )
 
-    booking_date = Column(DateTime, default=datetime.utcnow)
+    booking_date = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
 
-    travel_date = Column(DateTime, nullable=True)
+    travel_date = Column(
+        DateTime,
+        nullable=True
+    )
 
-    guests = Column(Integer, default=1)
+    guests = Column(
+        Integer,
+        default=1
+    )
 
-    total_price = Column(Float, nullable=False)
+    total_price = Column(
+        Float,
+        nullable=False
+    )
 
     # pending | confirmed | cancelled | completed
-    status = Column(String(50), default="pending")
+    status = Column(
+        String(50),
+        default="pending"
+    )
 
-    # ================= RELATIONSHIPS =================
+    # =====================================================
+    # RELATIONSHIPS
+    # =====================================================
 
     traveler = relationship(
         "User",
@@ -190,7 +343,11 @@ class Booking(Base):
 class Review(Base):
     __tablename__ = "reviews"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     user_id = Column(
         Integer,
@@ -204,13 +361,23 @@ class Review(Base):
         nullable=False
     )
 
-    rating = Column(Integer, nullable=False)
+    rating = Column(
+        Integer,
+        nullable=False
+    )
 
-    comment = Column(Text)
+    comment = Column(
+        Text
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
 
-    # ================= RELATIONSHIPS =================
+    # =====================================================
+    # RELATIONSHIPS
+    # =====================================================
 
     user = relationship(
         "User",
@@ -230,7 +397,11 @@ class Review(Base):
 class Wishlist(Base):
     __tablename__ = "wishlist"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     user_id = Column(
         Integer,
@@ -244,9 +415,14 @@ class Wishlist(Base):
         nullable=False
     )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
 
-    # ================= RELATIONSHIPS =================
+    # =====================================================
+    # RELATIONSHIPS
+    # =====================================================
 
     user = relationship(
         "User",
@@ -258,11 +434,14 @@ class Wishlist(Base):
         back_populates="wishlist_items"
     )
 
-    # Prevent duplicate wishlist items
+    # =====================================================
+    # PREVENT DUPLICATES
+    # =====================================================
+
     __table_args__ = (
         UniqueConstraint(
-            'user_id',
-            'destination_id',
-            name='unique_wishlist'
+            "user_id",
+            "destination_id",
+            name="unique_wishlist"
         ),
     )
