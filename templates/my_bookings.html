@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Bookings | AdventureX
+{% endblock %}
+
+{% block content %}
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-14">
+
+        <div>
+
+            <h1 class="text-5xl font-bold text-gray-800">
+
+                My Bookings
+
+            </h1>
+
+            <p class="text-gray-500 text-lg mt-3">
+
+                Manage your trips and adventure experiences
+
+            </p>
+
+        </div>
+
+        <a href="/"
+            class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition">
+
+            Explore Destinations
+
+        </a>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EMPTY STATE -->
+    <!-- ================================================= -->
+
+    {% if not bookings %}
+
+    <div class="bg-white rounded-[2rem] shadow-md p-16 text-center">
+
+        <div class="text-7xl mb-6">
+            ✈️
+        </div>
+
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">
+
+            No Bookings Yet
+
+        </h2>
+
+        <p class="text-gray-500 text-lg max-w-2xl mx-auto mb-10">
+
+            Start your next adventure by exploring destinations and booking unforgettable experiences.
+
+        </p>
+
+        <a href="/"
+            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl text-lg transition">
+
+            Explore Adventures
+
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <!-- ================================================= -->
+    <!-- BOOKINGS LIST -->
+    <!-- ================================================= -->
+
+    <div class="space-y-8">
+
+        {% for booking in bookings %}
+
+        <div class="bg-white rounded-[2rem] shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+
+            <div class="grid grid-cols-1 lg:grid-cols-4">
+
+                <!-- ================================================= -->
+                <!-- IMAGE -->
+                <!-- ================================================= -->
+
+                <div class="relative h-72 lg:h-full overflow-hidden">
+
+                    <img
+                        src="/static/uploads/{{ booking.destination.image }}"
+                        alt="{{ booking.destination.name }}"
+                        class="w-full h-full object-cover"
+                    >
+
+                    <!-- PRICE -->
+
+                    <div class="absolute bottom-5 right-5 bg-black/70 backdrop-blur-sm text-white px-5 py-2 rounded-2xl">
+
+                        <span class="font-bold text-lg">
+
+                            ₹{{ booking.total_price }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- CONTENT -->
+                <!-- ================================================= -->
+
+                <div class="lg:col-span-3 p-8">
+
+                    <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
+
+                        <!-- LEFT -->
+
+                        <div class="flex-1">
+
+                            <div class="flex items-center gap-3 mb-4">
+
+                                <span class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
+
+                                    {{ booking.destination.category }}
+
+                                </span>
+
+                            </div>
+
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">
+
+                                {{ booking.destination.name }}
+
+                            </h2>
+
+                            <div class="space-y-3 text-gray-600">
+
+                                <p>
+                                    📍 {{ booking.destination.location }}
+                                </p>
+
+                                <p>
+                                    👥 Guests: {{ booking.guests }}
+                                </p>
+
+                                <p>
+                                    📅
+                                    {{ booking.travel_date.strftime('%d %B %Y') }}
+                                </p>
+
+                                <p>
+                                    ⏳ Duration:
+                                    {{ booking.destination.duration }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- STATUS -->
+                        <!-- ================================================= -->
+
+                        <div>
+
+                            {% if booking.status == "pending" %}
+
+                            <span class="bg-yellow-100 text-yellow-700 px-5 py-3 rounded-full font-semibold">
+
+                                Pending
+
+                            </span>
+
+                            {% elif booking.status == "confirmed" %}
+
+                            <span class="bg-blue-100 text-blue-700 px-5 py-3 rounded-full font-semibold">
+
+                                Confirmed
+
+                            </span>
+
+                            {% elif booking.status == "completed" %}
+
+                            <span class="bg-green-100 text-green-700 px-5 py-3 rounded-full font-semibold">
+
+                                Completed
+
+                            </span>
+
+                            {% elif booking.status == "cancelled" %}
+
+                            <span class="bg-red-100 text-red-700 px-5 py-3 rounded-full font-semibold">
+
+                                Cancelled
+
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- ACTIONS -->
+                    <!-- ================================================= -->
+
+                    <div class="flex flex-wrap gap-4 mt-10">
+
+                        <!-- VIEW DESTINATION -->
+
+                        <a href="/destination/{{ booking.destination.slug }}"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition">
+
+                            View Destination
+
+                        </a>
+
+                        <!-- CANCEL BOOKING -->
+
+                        {% if booking.status == "pending" or booking.status == "confirmed" %}
+
+                        <form
+                            action="/cancel-booking/{{ booking.id }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3 rounded-2xl transition"
+                            >
+
+                                Cancel Booking
+
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

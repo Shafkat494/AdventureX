@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}
+Wishlist | AdventureX
+{% endblock %}
+
+{% block content %}
+
+<section class="max-w-7xl mx-auto px-6 py-16">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-14">
+
+        <div>
+
+            <h1 class="text-5xl font-bold text-gray-800">
+
+                My Wishlist
+
+            </h1>
+
+            <p class="text-gray-500 text-lg mt-3">
+
+                Your saved adventure destinations
+
+            </p>
+
+        </div>
+
+        {% if wishlist_items %}
+
+        <a href="/"
+            class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition">
+
+            Explore More
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EMPTY STATE -->
+    <!-- ================================================= -->
+
+    {% if not wishlist_items %}
+
+    <div class="bg-white rounded-[2rem] shadow-md p-16 text-center">
+
+        <div class="text-7xl mb-6">
+            💙
+        </div>
+
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">
+
+            Your Wishlist is Empty
+
+        </h2>
+
+        <p class="text-gray-500 text-lg max-w-2xl mx-auto mb-10">
+
+            Start exploring breathtaking destinations and save your favorite adventures for later.
+
+        </p>
+
+        <a href="/"
+            class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl text-lg transition">
+
+            Explore Destinations
+
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <!-- ================================================= -->
+    <!-- DESTINATION GRID -->
+    <!-- ================================================= -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+
+        {% for item in wishlist_items %}
+
+        {% set destination = item.destination %}
+
+        <div class="bg-white rounded-[2rem] shadow-md overflow-hidden hover:shadow-2xl transition duration-300 group">
+
+            <!-- ================================================= -->
+            <!-- IMAGE -->
+            <!-- ================================================= -->
+
+            <div class="relative overflow-hidden h-72">
+
+                <a href="/destination/{{ destination.slug }}">
+
+                    <img
+                        src="/static/uploads/{{ destination.image }}"
+                        alt="{{ destination.name }}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    >
+
+                </a>
+
+                <!-- CATEGORY -->
+
+                <div class="absolute top-5 left-5">
+
+                    <span class="bg-white/90 backdrop-blur-sm text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow">
+
+                        {{ destination.category }}
+
+                    </span>
+
+                </div>
+
+                <!-- PRICE -->
+
+                <div class="absolute bottom-5 right-5 bg-black/70 text-white px-4 py-2 rounded-2xl backdrop-blur-sm">
+
+                    <span class="font-bold text-lg">
+
+                        ₹{{ destination.price }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CONTENT -->
+            <!-- ================================================= -->
+
+            <div class="p-7">
+
+                <!-- LOCATION -->
+
+                <p class="text-gray-500 text-sm mb-3">
+
+                    📍 {{ destination.location }}
+
+                </p>
+
+                <!-- TITLE -->
+
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 line-clamp-1">
+
+                    {{ destination.name }}
+
+                </h2>
+
+                <!-- DESCRIPTION -->
+
+                <p class="text-gray-500 leading-relaxed mb-6 line-clamp-3">
+
+                    {{ destination.description[:140] }}...
+
+                </p>
+
+                <!-- INFO GRID -->
+
+                <div class="grid grid-cols-2 gap-4 mb-7">
+
+                    <!-- DURATION -->
+
+                    <div class="bg-gray-50 rounded-2xl p-4 text-center">
+
+                        <p class="text-sm text-gray-500 mb-1">
+
+                            Duration
+
+                        </p>
+
+                        <p class="font-semibold text-gray-800">
+
+                            {{ destination.duration }}
+
+                        </p>
+
+                    </div>
+
+                    <!-- DIFFICULTY -->
+
+                    <div class="bg-gray-50 rounded-2xl p-4 text-center">
+
+                        <p class="text-sm text-gray-500 mb-1">
+
+                            Difficulty
+
+                        </p>
+
+                        <p class="font-semibold text-gray-800">
+
+                            {{ destination.difficulty }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- ACTIONS -->
+
+                <div class="grid grid-cols-2 gap-4">
+
+                    <!-- VIEW -->
+
+                    <a href="/destination/{{ destination.slug }}"
+                        class="text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-medium transition">
+
+                        View
+
+                    </a>
+
+                    <!-- REMOVE -->
+
+                    <form
+                        action="/wishlist/remove/{{ destination.id }}"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-2xl font-medium transition"
+                        >
+
+                            Remove
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -527,6 +527,46 @@
 
                 </div>
 
+                <!-- =============================================== -->
+                <!-- WISHLIST BUTTON -->
+                <!-- =============================================== -->
+
+                {% if user %}
+
+                    {% if is_wishlisted %}
+
+                    <form action="/wishlist/remove/{{ destination.id }}"
+                        method="POST"
+                        class="mb-4">
+
+                        <button type="submit"
+                            class="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl transition font-semibold">
+
+                            Remove From Wishlist
+
+                        </button>
+
+                    </form>
+
+                    {% else %}
+
+                    <form action="/wishlist/add/{{ destination.id }}"
+                        method="POST"
+                        class="mb-4">
+
+                        <button type="submit"
+                            class="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl transition font-semibold">
+
+                            Add To Wishlist
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                {% endif %}
+
 
                 <!-- ================================================= -->
                 <!-- BOOKING FORM -->

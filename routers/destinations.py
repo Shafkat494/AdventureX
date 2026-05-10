@@ -24,7 +24,8 @@ from models import (
     Destination,
     DestinationImage,
     Booking,
-    Review
+    Review,
+    Wishlist
 )
 
 import shutil
@@ -62,12 +63,44 @@ ALLOWED_EXTENSIONS = [
     "webp"
 ]
 
+ALLOWED_CONTENT_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+]
+
+
+# =========================================================
+# GET CURRENT USER
+# =========================================================
+
+def get_current_user(request: Request, db: Session):
+
+    user_id = request.cookies.get("user")
+
+    if not user_id:
+        return None
+
+    try:
+        return db.query(User).filter(
+            User.id == int(user_id)
+        ).first()
+
+    except ValueError:
+        return None
+
 
 # =========================================================
 # SAVE IMAGE HELPER
 # =========================================================
 
 def save_image(file: UploadFile):
+
+    if not file.filename:
+        return None
+
+    if file.content_type not in ALLOWED_CONTENT_TYPES:
+        return None
 
     extension = file.filename.split(".")[-1].lower()
 
@@ -88,6 +121,48 @@ def save_image(file: UploadFile):
         )
 
     return filename
+
+
+# =========================================================
+# CREATE UNIQUE SLUG
+# =========================================================
+
+def generate_unique_slug(
+    name: str,
+    db: Session,
+    current_destination_id=None
+):
+
+    base_slug = re.sub(
+        r'[^a-zA-Z0-9]+',
+        '-',
+        name.lower()
+    ).strip('-')
+
+    slug = base_slug
+
+    counter = 1
+
+    while True:
+
+        existing = db.query(Destination).filter(
+            Destination.slug == slug
+        ).first()
+
+        if not existing:
+            break
+
+        if (
+            current_destination_id
+            and existing.id == current_destination_id
+        ):
+            break
+
+        slug = f"{base_slug}-{counter}"
+
+        counter += 1
+
+    return slug
 
 
 # =========================================================
@@ -131,17 +206,7 @@ def home(
         Destination.id.desc()
     ).all()
 
-    user = None
-
-    user_id = request.cookies.get("user")
-
-    if user_id:
-        try:
-            user = db.query(User).filter(
-                User.id == int(user_id)
-            ).first()
-        except:
-            user = None
+    user = get_current_user(request, db)
 
     return templates.TemplateResponse(
         request=request,
@@ -163,17 +228,7 @@ def create_destination_page(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
-
-    if not user_id:
-        return RedirectResponse(
-            "/login",
-            status_code=302
-        )
-
-    user = db.query(User).filter(
-        User.id == int(user_id)
-    ).first()
+    user = get_current_user(request, db)
 
     if not user:
         return RedirectResponse(
@@ -227,17 +282,7 @@ def create_destination(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
-
-    if not user_id:
-        return RedirectResponse(
-            "/login",
-            status_code=302
-        )
-
-    user = db.query(User).filter(
-        User.id == int(user_id)
-    ).first()
+    user = get_current_user(request, db)
 
     if not user:
         return RedirectResponse(
@@ -251,31 +296,7 @@ def create_destination(
             status_code=302
         )
 
-    # =====================================================
-    # CREATE SLUG
-    # =====================================================
-
-    base_slug = re.sub(
-        r'[^a-zA-Z0-9]+',
-        '-',
-        name.lower()
-    ).strip('-')
-
-    slug = base_slug
-
-    counter = 1
-
-    while db.query(Destination).filter(
-        Destination.slug == slug
-    ).first():
-
-        slug = f"{base_slug}-{counter}"
-
-        counter += 1
-
-    # =====================================================
-    # SAVE HERO IMAGE
-    # =====================================================
+    slug = generate_unique_slug(name, db)
 
     hero_image = save_image(image)
 
@@ -289,10 +310,6 @@ def create_destination(
                 "error": "Invalid hero image format"
             }
         )
-
-    # =====================================================
-    # CREATE DESTINATION
-    # =====================================================
 
     new_destination = Destination(
         name=name,
@@ -315,10 +332,6 @@ def create_destination(
     db.commit()
 
     db.refresh(new_destination)
-
-    # =====================================================
-    # SAVE GALLERY IMAGES
-    # =====================================================
 
     for gallery_image in gallery_images:
 
@@ -344,6 +357,7 @@ def create_destination(
         status_code=303
     )
 
+
 # =========================================================
 # EDIT DESTINATION PAGE
 # =========================================================
@@ -358,9 +372,9 @@ def edit_destination_page(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
+    user = get_current_user(request, db)
 
-    if not user_id:
+    if not user:
         return RedirectResponse(
             "/login",
             status_code=302
@@ -376,18 +390,14 @@ def edit_destination_page(
             status_code=302
         )
 
-    # Only owner/admin
     if (
-        destination.host_id != int(user_id)
+        destination.host_id != user.id
+        and user.role != "admin"
     ):
         return RedirectResponse(
             "/dashboard",
             status_code=302
         )
-
-    user = db.query(User).filter(
-        User.id == int(user_id)
-    ).first()
 
     return templates.TemplateResponse(
         request=request,
@@ -398,6 +408,7 @@ def edit_destination_page(
             "error": None
         }
     )
+
 
 # =========================================================
 # UPDATE DESTINATION
@@ -430,9 +441,9 @@ def update_destination(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
+    user = get_current_user(request, db)
 
-    if not user_id:
+    if not user:
         return RedirectResponse(
             "/login",
             status_code=302
@@ -448,11 +459,25 @@ def update_destination(
             status_code=302
         )
 
-    # Only owner/admin
-    if destination.host_id != int(user_id):
+    if (
+        destination.host_id != user.id
+        and user.role != "admin"
+    ):
         return RedirectResponse(
             "/dashboard",
             status_code=302
+        )
+
+    # =====================================================
+    # UPDATE SLUG IF NAME CHANGED
+    # =====================================================
+
+    if destination.name != name:
+
+        destination.slug = generate_unique_slug(
+            name,
+            db,
+            destination.id
         )
 
     # =====================================================
@@ -549,17 +574,7 @@ def destination_detail(
             status_code=404
         )
 
-    user = None
-
-    user_id = request.cookies.get("user")
-
-    if user_id:
-        try:
-            user = db.query(User).filter(
-                User.id == int(user_id)
-            ).first()
-        except:
-            user = None
+    user = get_current_user(request, db)
 
     reviews = db.query(Review).filter(
         Review.destination_id == destination.id
@@ -598,6 +613,18 @@ def destination_detail(
         if completed_booking and not existing_review:
             can_review = True
 
+    is_wishlisted = False
+
+    if user:
+
+        wishlist_item = db.query(Wishlist).filter(
+            Wishlist.user_id == user.id,
+            Wishlist.destination_id == destination.id
+        ).first()
+
+        if wishlist_item:
+            is_wishlisted = True
+
     return templates.TemplateResponse(
         request=request,
         name="destination_detail.html",
@@ -607,7 +634,8 @@ def destination_detail(
             "reviews": reviews,
             "average_rating": average_rating,
             "total_reviews": total_reviews,
-            "can_review": can_review
+            "can_review": can_review,
+            "is_wishlisted": is_wishlisted
         }
     )
 
@@ -627,17 +655,7 @@ def add_review(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
-
-    if not user_id:
-        return RedirectResponse(
-            "/login",
-            status_code=302
-        )
-
-    user = db.query(User).filter(
-        User.id == int(user_id)
-    ).first()
+    user = get_current_user(request, db)
 
     if not user:
         return RedirectResponse(
@@ -700,6 +718,140 @@ def add_review(
         status_code=303
     )
 
+
+# =========================================================
+# ADD TO WISHLIST
+# =========================================================
+
+@router.post("/wishlist/add/{destination_id}")
+def add_to_wishlist(
+    destination_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user = get_current_user(request, db)
+
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    destination = db.query(Destination).filter(
+        Destination.id == destination_id
+    ).first()
+
+    if not destination:
+        return RedirectResponse(
+            "/",
+            status_code=302
+        )
+
+    existing = db.query(Wishlist).filter(
+        Wishlist.user_id == user.id,
+        Wishlist.destination_id == destination_id
+    ).first()
+
+    if existing:
+        return RedirectResponse(
+            f"/destination/{destination.slug}",
+            status_code=302
+        )
+
+    wishlist_item = Wishlist(
+        user_id=user.id,
+        destination_id=destination_id
+    )
+
+    db.add(wishlist_item)
+
+    db.commit()
+
+    return RedirectResponse(
+        f"/destination/{destination.slug}",
+        status_code=303
+    )
+
+
+# =========================================================
+# REMOVE FROM WISHLIST
+# =========================================================
+
+@router.post("/wishlist/remove/{destination_id}")
+def remove_from_wishlist(
+    destination_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user = get_current_user(request, db)
+
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    destination = db.query(Destination).filter(
+        Destination.id == destination_id
+    ).first()
+
+    if not destination:
+        return RedirectResponse(
+            "/",
+            status_code=302
+        )
+
+    wishlist_item = db.query(Wishlist).filter(
+        Wishlist.user_id == user.id,
+        Wishlist.destination_id == destination_id
+    ).first()
+
+    if wishlist_item:
+
+        db.delete(wishlist_item)
+
+        db.commit()
+
+    return RedirectResponse(
+        f"/destination/{destination.slug}",
+        status_code=303
+    )
+
+
+# =========================================================
+# WISHLIST PAGE
+# =========================================================
+
+@router.get("/wishlist", response_class=HTMLResponse)
+def wishlist_page(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user = get_current_user(request, db)
+
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    wishlist_items = db.query(Wishlist).filter(
+        Wishlist.user_id == user.id
+    ).all()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="wishlist.html",
+        context={
+            "user": user,
+            "wishlist_items": wishlist_items
+        }
+    )
+
+
 # =========================================================
 # DELETE GALLERY IMAGE
 # =========================================================
@@ -711,9 +863,9 @@ def delete_gallery_image(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
+    user = get_current_user(request, db)
 
-    if not user_id:
+    if not user:
         return RedirectResponse(
             "/login",
             status_code=302
@@ -743,20 +895,14 @@ def delete_gallery_image(
             status_code=302
         )
 
-    # =====================================================
-    # OWNER CHECK
-    # =====================================================
-
-    if destination.host_id != int(user_id):
-
+    if (
+        destination.host_id != user.id
+        and user.role != "admin"
+    ):
         return RedirectResponse(
             "/dashboard",
             status_code=302
         )
-
-    # =====================================================
-    # DELETE IMAGE FILE
-    # =====================================================
 
     image_path = os.path.join(
         UPLOAD_DIR,
@@ -766,10 +912,6 @@ def delete_gallery_image(
     if os.path.exists(image_path):
         os.remove(image_path)
 
-    # =====================================================
-    # DELETE DATABASE RECORD
-    # =====================================================
-
     db.delete(gallery_image)
 
     db.commit()
@@ -778,6 +920,40 @@ def delete_gallery_image(
         f"/edit-destination/{destination.id}",
         status_code=303
     )
+
+# =========================================================
+# MY BOOKINGS PAGE
+# =========================================================
+
+@router.get("/my-bookings", response_class=HTMLResponse)
+def my_bookings_page(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user = get_current_user(request, db)
+
+    if not user:
+        return RedirectResponse(
+            "/login",
+            status_code=302
+        )
+
+    bookings = db.query(Booking).filter(
+        Booking.traveler_id == user.id
+    ).order_by(
+        Booking.id.desc()
+    ).all()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="my_bookings.html",
+        context={
+            "user": user,
+            "bookings": bookings
+        }
+    )
+
 
 # =========================================================
 # DELETE DESTINATION
@@ -790,9 +966,9 @@ def delete_destination(
     db: Session = Depends(get_db)
 ):
 
-    user_id = request.cookies.get("user")
+    user = get_current_user(request, db)
 
-    if not user_id:
+    if not user:
         return RedirectResponse(
             "/login",
             status_code=302
@@ -808,8 +984,10 @@ def delete_destination(
             status_code=302
         )
 
-    if destination.host_id != int(user_id):
-
+    if (
+        destination.host_id != user.id
+        and user.role != "admin"
+    ):
         return RedirectResponse(
             "/dashboard",
             status_code=302
