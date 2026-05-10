@@ -217,6 +217,65 @@ def home(
         }
     )
 
+# =========================================================
+# CATEGORY PAGE
+# =========================================================
+
+@router.get(
+    "/category/{category_name}",
+    response_class=HTMLResponse
+)
+def category_page(
+    category_name: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+
+    user = get_current_user(request, db)
+
+    # =====================================================
+    # VALID CATEGORIES
+    # =====================================================
+
+    valid_categories = [
+        "trekking",
+        "skiing",
+        "climbing",
+        "camping"
+    ]
+
+    if category_name.lower() not in valid_categories:
+
+        return HTMLResponse(
+            "Category not found",
+            status_code=404
+        )
+
+    # =====================================================
+    # FETCH DESTINATIONS
+    # =====================================================
+
+    destinations = db.query(Destination).filter(
+        func.lower(Destination.category) == category_name.lower()
+    ).order_by(
+        Destination.id.desc()
+    ).all()
+
+    # =====================================================
+    # FORMAT TITLE
+    # =====================================================
+
+    formatted_category = category_name.capitalize()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="category.html",
+        context={
+            "user": user,
+            "destinations": destinations,
+            "category_name": formatted_category
+        }
+    )
 
 # =========================================================
 # CREATE DESTINATION PAGE
